@@ -1,22 +1,25 @@
-# AMFCC Meal and Campus System
+# AMFCC Student Services Platform v2.0
 
-## Public meal page
-Open `index.html`. Students only see Student Meal Check-In. Kitchen Staff remains PIN protected.
+This repository is a static GitHub Pages application connected to the AMFCC Supabase project.
 
-The campus gate scanner and campus dashboard are intentionally not linked from the student-facing meal page.
+## Public student pages
+- `/` - landing page
+- `/meal/` - meal check-in
+- `/passes/` - personal gate pass requests and status tracking
 
-## Gate scanner
-Open `gate.html` only on the authorised gate device.
+## Operational pages not shown on the landing page
+- `/gate/` - dedicated gate kiosk
+- `/dashboard/` - senior staff dashboard, PIN `1960`
+- `/settings/` - platform settings, PIN `1960`
 
-- Students present their student ID card or QR code to the scanner.
-- Hardware scanners enter the five-digit registration number automatically.
-- Camera scanning is available from the gate device.
-- Students cannot type a registration number on the normal gate screen.
-- Guards use **Guard controls** and PIN `1960` to change the station between CHECK IN and CHECK OUT.
-- Guards may manually enter a registration number only when the student's card or QR code is unavailable.
-
-## Campus dashboard
-Open `campus-dashboard.html` directly. It is PIN protected with `1960` and is intended for administrators and authorised student leadership.
+## Gate keyboard controls
+- `SPACE` switches CHECK IN and CHECK OUT.
+- `F1` switches between Campus Movement and Gate Duty.
+- `Ctrl + Shift + A` opens guard manual registration entry.
+- `ESC` clears a partial scan or result.
+- `F5` refreshes the kiosk.
 
 ## Deployment
-Upload every file in this folder to the root of the GitHub Pages repository and replace the existing files.
+Upload all files and folders in this package to the root of `amfcc-hre/amfcc_student_services`. Enable GitHub Pages from the `main` branch and root folder.
+
+Read `docs/DEVELOPER_HANDOVER.md` and the accompanying Word handover document before making production changes.
