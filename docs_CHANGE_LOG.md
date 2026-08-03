@@ -26,3 +26,18 @@
 - Added the `student_movements_export` Supabase function.
 - Allowed both Management and Student Leadership passwords to export operational movement reports.
 - Kept fees and term-registration information out of Student Leadership exports.
+
+## v4.1 - Gate QR scanner hotfix
+
+- Fixed a checkout-mode keyboard conflict where the first digit `2` in AMFCC registration numbers was being captured as destination option 2.
+- Destination keys 1-3 now wait briefly to distinguish a single manual keypress from a full five-digit scanner input.
+- Improved gate error messages so database, device-authorisation and unknown-card errors are shown separately.
+- Bumped the service-worker cache so gate terminals download the corrected JavaScript.
+
+## v5
+
+- Changed Kitchen Staff PIN to 1958.
+- Added Tasha-Adel Zulu, registration 26073.
+- Allowed Management and Student Leadership to edit campus status and basic accommodation.
+- Made dashboard summary cards filter the related student or pass list.
+- Reordered Management gate-pass columns and made student names open pass review.

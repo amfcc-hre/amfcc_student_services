@@ -20,11 +20,11 @@
   </div>
 
   <div class="grid five metrics-grid">
-    <div class="card metric"><b id="onCount">0</b><span>On campus</span></div>
-    <div class="card metric"><b id="offCount">0</b><span>Off campus</span></div>
-    <div class="card metric sick"><b id="bedRestCount">0</b><span>On bed rest</span></div>
-    <div class="card metric"><b id="pendingCount">0</b><span>Pending passes</span></div>
-    <div class="card metric"><b id="overdueCount">0</b><span>Overdue</span></div>
+    <button type="button" class="card metric metric-filter" data-filter-tab="campus" data-filter-value="IN"><b id="onCount">0</b><span>On campus</span></button>
+    <button type="button" class="card metric metric-filter" data-filter-tab="campus" data-filter-value="OUT"><b id="offCount">0</b><span>Off campus</span></button>
+    <button type="button" class="card metric metric-filter sick" data-filter-tab="campus" data-filter-value="BED_REST"><b id="bedRestCount">0</b><span>On bed rest</span></button>
+    <button type="button" class="card metric metric-filter" data-filter-tab="passes" data-filter-value="pending"><b id="pendingCount">0</b><span>Pending passes</span></button>
+    <button type="button" class="card metric metric-filter" data-filter-tab="passes" data-filter-value="OVERDUE"><b id="overdueCount">0</b><span>Overdue</span></button>
   </div>
 
   <div class="tabs">
@@ -49,19 +49,19 @@
       </select>
       <button id="refresh" class="btn primary">Refresh</button>
     </div>
-    <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Registration</th><th>Status</th><th>Health</th><th>Last movement</th></tr></thead><tbody id="campusRows"></tbody></table></div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Registration</th><th>Status</th><th>Health</th><th>Last movement</th><th>Action</th></tr></thead><tbody id="campusRows"></tbody></table></div>
   </section>
 
   <section id="accommodation" class="section card">
     <div class="toolbar"><input id="accommodationSearch" placeholder="Search student, hostel or room"><select id="accommodationFilter"><option value="ALL">All students</option><option value="ALLOCATED">Allocated</option><option value="NOT_ALLOCATED">Not allocated</option><option value="BED_REST">On bed rest</option><option value="MATERNITY">Maternity</option></select></div>
     <div class="notice info">Student Leadership sees basic accommodation only. Registration, fees, waivers and management notes are not included in this view.</div>
-    <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Registration</th><th>Residence</th><th>Room</th><th>Bed</th><th>Status</th></tr></thead><tbody id="accommodationRows"></tbody></table></div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Registration</th><th>Residence</th><th>Room</th><th>Bed</th><th>Status</th><th>Action</th></tr></thead><tbody id="accommodationRows"></tbody></table></div>
   </section>
 
   <section id="passes" class="section card">
-    <div class="toolbar"><input id="passSearch" placeholder="Search student, destination or registration"><select id="passFilter"><option value="ALL">All pass statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="departed">Departed</option><option value="returned">Returned</option><option value="rejected">Rejected</option><option value="cancelled">Cancelled</option></select></div>
+    <div class="toolbar"><input id="passSearch" placeholder="Search student, destination or registration"><select id="passFilter"><option value="ALL">All pass statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="departed">Departed</option><option value="returned">Returned</option><option value="rejected">Rejected</option><option value="cancelled">Cancelled</option><option value="OVERDUE">Overdue</option></select></div>
     <div id="leadershipPassNotice" class="notice info" style="display:none">Student Leadership can view pass information but cannot approve, reject or cancel passes.</div>
-    <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Destination</th><th>Departure</th><th>Status</th><th>Approvals</th><th></th></tr></thead><tbody id="passRows"></tbody></table></div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Destination</th><th>Status and review</th><th>Departure</th></tr></thead><tbody id="passRows"></tbody></table></div>
   </section>
 
   <section id="duty" class="section card"><h2>Gate duty today</h2><div class="table-wrap"><table class="data-table"><thead><tr><th>Time</th><th>Student</th><th>Registration</th><th>Direction</th><th>Source</th></tr></thead><tbody id="dutyRows"></tbody></table></div></section>
@@ -108,6 +108,28 @@
 <div id="login" class="modal open"><div class="modalbox"><div style="text-align:center"><img src="assets_icon.png" width="72" style="border-radius:16px"><h2>Administrative Dashboard</h2><p>Enter the Management or Student Leadership password.</p></div><div class="field"><input id="pin" class="pin-input" type="password" inputmode="numeric" maxlength="4"></div><p id="pinError" class="notice bad" style="display:none"></p><button id="loginBtn" class="btn primary" style="width:100%;margin-top:12px">Open dashboard</button></div></div>
 
 <div id="reviewModal" class="modal"><div class="modalbox"><h2>Review gate pass</h2><div id="reviewDetails" class="review-details"></div><div class="field"><label>Who is making this decision?</label><select id="actorRole"><option value="">Choose role</option><option value="administrator">School Administrator</option><option value="principal">Principal</option><option value="dean">Dean</option><option value="director">Director</option></select></div><div class="field" style="margin-top:10px"><label>Comments or reason</label><textarea id="decisionComments"></textarea></div><div class="action-grid" style="margin-top:12px"><button class="btn good" data-decision="approved">Approve</button><button class="btn danger" data-decision="rejected">Reject</button><button class="btn secondary" data-decision="cancelled">Cancel pass</button></div><button id="closeReview" class="btn secondary" style="width:100%;margin-top:10px">Close</button></div></div>
+
+<div id="studentEditModal" class="modal"><div class="modalbox student-edit-modal">
+  <h2>Edit student operations</h2>
+  <div id="studentEditSummary" class="review-details"></div>
+  <div class="edit-section">
+    <h3>Campus status</h3>
+    <div class="field"><label>Current status</label><select id="editCampusStatus"><option value="">Keep current status</option><option value="IN">On campus</option><option value="OUT">Off campus</option></select></div>
+    <div class="field"><label>Reason or note</label><textarea id="editCampusNote" placeholder="Optional explanation for the status correction"></textarea></div>
+  </div>
+  <div class="edit-section">
+    <h3>Accommodation</h3>
+    <div class="grid two">
+      <div class="field"><label>Residence</label><input id="editResidence" placeholder="Hostel or residence"></div>
+      <div class="field"><label>Room</label><input id="editRoom" placeholder="Room"></div>
+      <div class="field"><label>Bed</label><input id="editBed" placeholder="Bed"></div>
+      <div class="field"><label>Accommodation status</label><select id="editAccommodationStatus"><option value="waiting">Waiting</option><option value="allocated">Allocated</option><option value="checked_in">Checked in</option><option value="checked_out">Checked out</option></select></div>
+    </div>
+    <label class="check-row"><input id="removeAccommodation" type="checkbox"> Remove current accommodation allocation</label>
+  </div>
+  <button id="saveStudentEdit" class="btn primary" style="width:100%;margin-top:12px">Save changes</button>
+  <button id="closeStudentEdit" class="btn secondary" style="width:100%;margin-top:8px">Close</button>
+</div></div>
 <div id="toast" class="result-overlay"><div id="toastBox" class="result-box"></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="shared_config.js"></script><script src="shared_supabase.js"></script><script src="shared_utils.js"></script><script src="dashboard_dashboard.js"></script>

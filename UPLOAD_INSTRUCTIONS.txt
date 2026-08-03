@@ -1,9 +1,12 @@
-AMFCC Student Services Platform v4 Full Replacement Instructions
+AMFCC Student Services Platform v5 Full Replacement Instructions
 
-The new Student Movement Status database export function has already been applied to the production AMFCC Supabase database.
+The production AMFCC Supabase database has already been updated for:
+- Student Leadership campus-status and basic-accommodation editing
+- Kitchen staff PIN 1958
+- Tasha-Adel Zulu, registration 26073
 
 To replace the website code:
-1. Extract amfcc_student_services_platform_v4_full_stack.zip.
+1. Extract amfcc_student_services_platform_v5_full_stack.zip.
 2. Open https://github.com/amfcc-hre/amfcc_student_services
 3. Open the main branch and select Add file > Upload files.
 4. Select every extracted file and upload them directly into the repository root.
@@ -11,8 +14,9 @@ To replace the website code:
 6. Allow GitHub to replace all files with matching names.
 7. Commit the upload.
 8. Wait for GitHub Pages to publish.
-9. Open the Administrative Dashboard and press Ctrl + F5.
-10. On the gate kiosk, close and reopen Edge if the old version remains.
+9. Open the Administrative Dashboard and press Ctrl + F5 twice.
+10. Open the Meal Check-In page and press Ctrl + F5 twice.
+11. On the gate kiosk, close and reopen Edge if an old version remains.
 
 Administrative Dashboard passwords:
 - Management: 0593
@@ -20,15 +24,12 @@ Administrative Dashboard passwords:
 
 Other access:
 - Clinic: 1957
-- Kitchen staff: 1960
+- Kitchen staff: 1958
 
-Version 4 report location:
-Administrative Dashboard > Reports > Student movement status report
-
-Movement report choices:
-- Current status
-- Last 24 hours
-- Last 3 days
-- Past week
-
-Every report includes current campus status, bed rest, maternity, gate-pass status, movement activity and accommodation.
+Version 5 dashboard changes:
+- Student Leadership and Management can edit On Campus/Off Campus status.
+- Student Leadership and Management can edit basic accommodation.
+- Summary cards apply the corresponding list filter.
+- Management gate-pass columns are Student, Destination, Status/Review, Departure.
+- Clicking a student name in the Management gate-pass list opens review.
+- Student movement exports remain under Administrative Dashboard > Reports.

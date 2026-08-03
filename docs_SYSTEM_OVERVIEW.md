@@ -19,3 +19,8 @@ AMFCC Student Services is one web platform with separate entry points for studen
 The Administrative Dashboard can export one-row-per-student status reports for Current Status, Last 24 Hours, Last 3 Days and Past Week. The reports identify who is on campus, on bed rest, on maternity status and currently out on a gate pass. They also include movement activity and current accommodation.
 
 Tanaka/Amalinda Shops, MDH and Town/Other can be selected at checkout when a student does not have an approved personal gate pass.
+
+
+## Student Leadership operational edits
+
+The Student Leadership dashboard can correct current campus status and maintain basic accommodation. It still excludes registration administration, fees, fee waivers, management settings and gate-pass approval decisions.

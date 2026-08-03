@@ -109,7 +109,10 @@ async function record(raw,source='scanner'){
     return showResult('bad','SELECT DESTINATION',data);
   }
   if(['duplicate','same_status'].includes(data?.status))return showResult('warn',moduleMode==='duty'?'GATE DUTY ALREADY RECORDED':(direction==='IN'?'ALREADY CHECKED IN':'ALREADY CHECKED OUT'),data);
-  showResult('bad','CARD NOT RECOGNISED',data||{message:'Please see security.'});
+  if(data?.status==='not_found')return showResult('bad','CARD NOT RECOGNISED',data);
+  if(data?.status==='unauthorized')return showResult('bad','DEVICE NOT AUTHORISED',data);
+  if(data?.status==='invalid_direction')return showResult('bad','INVALID GATE MODE',data);
+  showResult('bad','NOT RECORDED',data||{message:'Please see security.'});
 }
 function openManual(){$('manual').classList.add('open');$('manualReg').focus();}
 function closeManual(){$('manual').classList.remove('open');$('manualReg').value='';focusScanner();}
@@ -117,11 +120,36 @@ function manualRecord(){const reg=$('manualReg').value;closeManual();record(reg,
 
 $('scannerInput').addEventListener('input',event=>{
   clearTimeout(scanTimer);
-  scanTimer=setTimeout(()=>{const reg=normalizeReg(event.target.value);if(/^\d{5}$/.test(reg))record(reg);},90);
+  scanTimer=setTimeout(()=>{
+    const digits=String(event.target.value??'').replace(/\D/g,'');
+    const reg=normalizeReg(event.target.value);
+
+    // In CHECK OUT mode, a single 1, 2 or 3 entered by a guard selects
+    // the destination. Waiting briefly prevents the first digit of a
+    // five-digit QR scan (all AMFCC numbers begin with 2) being mistaken
+    // for destination option 2.
+    if(moduleMode==='campus'&&direction==='OUT'&&/^[123]$/.test(digits)){
+      $('scannerInput').value='';
+      selectDestination(digits);
+      return;
+    }
+
+    if(/^\d{5}$/.test(reg))record(reg);
+  },300);
 });
 $('scannerInput').addEventListener('keydown',event=>{
   AMFCCSounds.unlock();
-  if(event.key==='Enter'){event.preventDefault();clearTimeout(scanTimer);record(event.target.value);}
+  if(event.key==='Enter'){
+    event.preventDefault();
+    clearTimeout(scanTimer);
+    const digits=String(event.target.value??'').replace(/\D/g,'');
+    if(moduleMode==='campus'&&direction==='OUT'&&/^[123]$/.test(digits)){
+      $('scannerInput').value='';
+      selectDestination(digits);
+      return;
+    }
+    record(event.target.value);
+  }
 });
 $('result').onclick=hideResult;
 $('manualRecord').onclick=manualRecord;
@@ -134,7 +162,6 @@ document.addEventListener('keydown',event=>{
   if($('manual').classList.contains('open')){if(event.key==='Escape')closeManual();return;}
   if(event.key==='F1'){event.preventDefault();toggleModule();return;}
   if(event.code==='Space'){event.preventDefault();toggleDirection();return;}
-  if(moduleMode==='campus'&&direction==='OUT'&&['1','2','3'].includes(event.key)){event.preventDefault();selectDestination(event.key);return;}
   if(event.key==='Escape'){$('scannerInput').value='';clearDestination();hideResult();}
 });
 document.addEventListener('click',focusScanner);

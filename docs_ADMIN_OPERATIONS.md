@@ -4,6 +4,8 @@
 
 - Management: `0593`
 - Student Leadership: `1960`
+- Kitchen staff: `1958`
+- Clinic staff: `1957`
 
 ## Student movement exports
 
@@ -34,3 +36,8 @@ The current-status report is a live snapshot. The other reports still show every
 ## Other exports
 
 The Detailed Activity Exports section provides individual campus movements, gate passes, gate duty and meals for a selected start and end date.
+
+
+## Student Leadership operational editing
+
+Student Leadership may update a student between On Campus and Off Campus and may edit basic residence, room, bed and accommodation status. These changes are written through protected database functions and recorded in the audit log. Student Leadership does not receive registration administration, fees, waivers or management-only settings.

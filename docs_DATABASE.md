@@ -29,3 +29,10 @@ The migration is stored in `database/migrations/001_student_services_platform_v2
 ## Version 4 report function
 
 `student_movements_export(p_pin, p_period)` returns a one-row-per-active-student operational report. Allowed periods are `current_status`, `last_24_hours`, `last_3_days` and `past_week`. Both Management password `0593` and Student Leadership password `1960` can use it. The function does not return fees or registration administration information.
+
+
+## v5 dashboard edit functions
+
+- `dashboard_update_student_campus_status(p_pin, p_registration_number, p_direction, p_note)` accepts Management 0593 or Student Leadership 1960 and records an audited administrative movement.
+- `dashboard_update_student_accommodation(p_pin, p_registration_number, p_residence, p_room, p_bed, p_allocation_status, p_remove)` accepts Management 0593 or Student Leadership 1960 and updates only basic accommodation.
+- Meal staff functions require PIN 1958.

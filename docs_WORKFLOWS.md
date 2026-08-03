@@ -24,3 +24,14 @@
 2. Search for a student by name or registration number.
 3. Mark the student on bed rest and enter optional clinic notes.
 4. The dashboard displays a bed icon and supports the On Bed Rest filter.
+
+
+## Edit student operations from the dashboard
+
+1. Sign in with Management password 0593 or Student Leadership password 1960.
+2. Open Campus or Accommodation.
+3. Select Edit beside the student.
+4. Change On Campus/Off Campus and/or basic accommodation.
+5. Save. The system records the access level in the audit log.
+
+Clicking the On Campus, Off Campus or On Bed Rest summary card opens the Campus list with the corresponding filter. Pending and Overdue cards open the Gate Pass list with the matching filter.

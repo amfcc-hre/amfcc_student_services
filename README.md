@@ -1,4 +1,4 @@
-# AMFCC Student Services Platform v4
+# AMFCC Student Services Platform v5
 
 This is the complete flat-file GitHub Pages package for the AMFCC Student Services Platform. Upload every file directly to the root of:
 
@@ -19,10 +19,11 @@ The application is a static front end connected to the AMFCC Supabase project.
 ## Access
 
 - Students: no password for meals and personal gate passes
-- Kitchen staff: PIN `1960`
+- Kitchen staff: PIN `1958`
 - Gate guards: authorised gate-device token, no guard PIN
 - Clinic staff: password `1957`
 - Student Leadership dashboard: password `1960`
+- Student Leadership can update current campus status and basic accommodation. Registration and fees remain hidden.
 - Management dashboard and Settings: password `0593`
 
 ## Version 4 movement exports
@@ -73,3 +74,12 @@ The production AMFCC Supabase database already has migration 003 applied.
 Extract the full-stack ZIP. Upload all extracted files directly into the repository root and replace files with the same names. Do not upload the ZIP itself and do not place the files inside another folder.
 
 After GitHub Pages republishes, press `Ctrl + F5` on normal computers. On the gate kiosk, close and reopen Edge if the old version remains cached.
+
+
+## v5 operational updates
+
+- Added Tasha-Adel Zulu, registration 26073.
+- Dashboard summary cards now open the matching filtered list.
+- Management and Student Leadership can correct On Campus/Off Campus status and edit basic accommodation.
+- Management gate-pass rows are ordered Student, Destination, Status/Review, Departure. Clicking the student name opens the review window.
+- Kitchen staff PIN changed to 1958.

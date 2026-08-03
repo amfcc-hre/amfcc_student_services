@@ -1,4 +1,4 @@
-AMFCC Student Services Platform v4 Full Stack Package
+AMFCC Student Services Platform v5 Full Stack Package
 Generated: 2026-08-03
 
 Upload all files directly to the GitHub repository root.
@@ -17,6 +17,7 @@ dashboard_index.html
 database_migrations_001_student_services_platform_v2.sql
 database_migrations_002_clinic_gate_accommodation.sql
 database_migrations_003_student_movement_exports.sql
+database_migrations_004_dashboard_edits_kitchen_pin_tasha.sql
 docs_ADMIN_OPERATIONS.md
 docs_AMFCC_Student_Services_Platform_v2_Handover.docx
 docs_ARCHITECTURE.md
