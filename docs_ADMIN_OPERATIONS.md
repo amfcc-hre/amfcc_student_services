@@ -1,19 +1,36 @@
-# Administrator Operations
+# Administrative Operations
 
-## Daily
-- Check the dashboard counts and overdue passes.
-- Review pending personal gate passes.
-- Select the actual role making each decision.
-- Add a reason for rejection or cancellation.
-- Confirm the gate terminal shows Internet and Database as available.
+## Dashboard access
 
-## Weekly
-- Export campus, pass, gate-duty or meal records as needed.
-- Check that the gate device has recently synced.
-- During the pilot, compare the electronic records with paper passes.
+- Management: `0593`
+- Student Leadership: `1960`
 
-## End of pilot
-Open `/settings/`, enter PIN 1960, switch Paper Pass Pilot Mode off and save.
+## Student movement exports
 
-## Shared PIN
-The shared PIN is currently enforced in Supabase functions. Changing it requires a controlled SQL migration that updates every PIN-protected function. Do not change only the JavaScript.
+Open `Administrative Dashboard > Reports > Student movement status report`.
+
+Choose one of:
+
+- Current status
+- Last 24 hours
+- Last 3 days
+- Past week
+
+Select **Download student movement CSV**.
+
+The CSV includes all active students and shows:
+
+- Current campus status
+- On-campus indicator
+- Bed-rest indicator and start time
+- Maternity indicator
+- Gate-pass indicator, status, destination and expected return
+- Latest campus movement
+- Movement count and latest movement in the chosen period
+- Residence, room and bed
+
+The current-status report is a live snapshot. The other reports still show every active student, with additional movement activity for the selected period.
+
+## Other exports
+
+The Detailed Activity Exports section provides individual campus movements, gate passes, gate duty and meals for a selected start and end date.

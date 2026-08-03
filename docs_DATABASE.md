@@ -25,3 +25,7 @@
 - `student_services_export`
 
 The migration is stored in `database/migrations/001_student_services_platform_v2.sql` and has already been applied to the production Supabase project.
+
+## Version 4 report function
+
+`student_movements_export(p_pin, p_period)` returns a one-row-per-active-student operational report. Allowed periods are `current_status`, `last_24_hours`, `last_3_days` and `past_week`. Both Management password `0593` and Student Leadership password `1960` can use it. The function does not return fees or registration administration information.

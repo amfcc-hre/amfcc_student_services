@@ -1,0 +1,34 @@
+AMFCC Student Services Platform v4 Full Replacement Instructions
+
+The new Student Movement Status database export function has already been applied to the production AMFCC Supabase database.
+
+To replace the website code:
+1. Extract amfcc_student_services_platform_v4_full_stack.zip.
+2. Open https://github.com/amfcc-hre/amfcc_student_services
+3. Open the main branch and select Add file > Upload files.
+4. Select every extracted file and upload them directly into the repository root.
+5. Do not upload the ZIP file and do not create a new folder.
+6. Allow GitHub to replace all files with matching names.
+7. Commit the upload.
+8. Wait for GitHub Pages to publish.
+9. Open the Administrative Dashboard and press Ctrl + F5.
+10. On the gate kiosk, close and reopen Edge if the old version remains.
+
+Administrative Dashboard passwords:
+- Management: 0593
+- Student Leadership: 1960
+
+Other access:
+- Clinic: 1957
+- Kitchen staff: 1960
+
+Version 4 report location:
+Administrative Dashboard > Reports > Student movement status report
+
+Movement report choices:
+- Current status
+- Last 24 hours
+- Last 3 days
+- Past week
+
+Every report includes current campus status, bed rest, maternity, gate-pass status, movement activity and accommodation.
