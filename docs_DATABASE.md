@@ -36,3 +36,12 @@ The migration is stored in `database/migrations/001_student_services_platform_v2
 - `dashboard_update_student_campus_status(p_pin, p_registration_number, p_direction, p_note)` accepts Management 0593 or Student Leadership 1960 and records an audited administrative movement.
 - `dashboard_update_student_accommodation(p_pin, p_registration_number, p_residence, p_room, p_bed, p_allocation_status, p_remove)` accepts Management 0593 or Student Leadership 1960 and updates only basic accommodation.
 - Meal staff functions require PIN 1958.
+
+
+## v6 Administration, fees and holiday mode
+
+The v6 migration adds `academic_terms` and `student_term_fee_status`. The current 2026 term dates are Term 1 due 15 January, Term 2 due 5 May and Term 3 due 5 September. Every active student starts as fees paid for all configured 2026 terms so School Administration can correct exceptions.
+
+New database functions include `admin_services_dashboard`, `admin_gate_pass_decision`, `admin_update_fee_status` and `admin_update_setting`. The School Administration password is checked server-side. School Holiday Mode is stored in `system_settings.school_holiday_mode`.
+
+When Holiday Mode is off, a gate pass requires the School Administrator plus one of Principal, Dean or Director, and the Wednesday 4:00 pm deadline applies. When Holiday Mode is on, the deadline is suspended and the School Administrator approval alone completes the pass.

@@ -41,3 +41,16 @@
 - Allowed Management and Student Leadership to edit campus status and basic accommodation.
 - Made dashboard summary cards filter the related student or pass list.
 - Reordered Management gate-pass columns and made student names open pass review.
+
+## v6 - Separate School Administration, fees and holiday mode
+
+- Added separate `admin_index.html` site protected by password 1972.
+- Added School Administrator gate-pass decisions to the Admin site only.
+- Removed School Administrator from the Management decision-role list.
+- Added academic terms and per-term Paid/Not paid fee status.
+- Added 2026 due dates: 15 January, 5 May and 5 September.
+- Initially marked all active students as paid for all seeded 2026 terms.
+- Added Fees check/cross to Admin accommodation.
+- Added School Holiday Mode controlled only from the Admin site.
+- Holiday mode removes the Wednesday deadline and requires only Administrator approval.
+- Normal mode keeps the Wednesday 4:00 pm deadline and two-signature approval.

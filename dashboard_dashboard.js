@@ -35,6 +35,7 @@ function render(){
   $('accessBadge').className='access-badge '+access;
   $('settingsLink').style.display=dataCache.can_manage_settings?'inline':'none';
   $('leadershipPassNotice').style.display=dataCache.can_review_passes?'none':'block';
+  $('holidayBanner').style.display=dataCache.school_holiday_mode?'block':'none';
   renderCampus();
   renderAccommodation();
   renderPasses();
@@ -246,9 +247,9 @@ function openReview(id){
 }
 
 async function decide(decision){
-  if(!dataCache.can_review_passes)return toast('warn','Management only','Use the Management password to make decisions.');
+  if(!dataCache.can_review_passes)return toast('warn','Management only','Use the Management password to make a senior staff decision.');
   const role=$('actorRole').value;
-  if(!role)return toast('warn','Choose a role','Select who is approving or rejecting.');
+  if(!role)return toast('warn','Choose a role','Select Principal, Dean or Director.');
   const comments=$('decisionComments').value.trim();
   if(['rejected','cancelled'].includes(decision)&&!comments)return toast('warn','Add a reason','A rejection or cancellation reason is required.');
   const {data,error}=await amfccDb.rpc('dashboard_gate_pass_decision',{p_pin:pin,p_pass_id:reviewPassId,p_actor_role:role,p_decision:decision,p_comments:comments||null});

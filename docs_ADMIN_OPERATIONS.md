@@ -1,43 +1,44 @@
 # Administrative Operations
 
-## Dashboard access
+## Passwords
 
+- School Administration: `1972`
 - Management: `0593`
 - Student Leadership: `1960`
 - Kitchen staff: `1958`
 - Clinic staff: `1957`
 
-## Student movement exports
+## School Administration site
 
-Open `Administrative Dashboard > Reports > Student movement status report`.
+Open `admin_index.html` and sign in with `1972`.
 
-Choose one of:
+Administration can:
 
-- Current status
-- Last 24 hours
-- Last 3 days
-- Past week
+- See and edit campus status and accommodation
+- Approve, reject or cancel gate passes as School Administrator
+- Mark fees Paid or Not paid for the selected term
+- See a Fees check or cross in Accommodation
+- Export movement and activity reports
+- Turn School Holiday Mode on or off
+- Manage paper-pass pilot and kiosk display settings
 
-Select **Download student movement CSV**.
+## Fee status
 
-The CSV includes all active students and shows:
+Choose the fee term at the top of the Admin page. Open Fees and click the Paid or Not paid button next to a student. The accommodation Fees column uses the same selected term.
 
-- Current campus status
-- On-campus indicator
-- Bed-rest indicator and start time
-- Maternity indicator
-- Gate-pass indicator, status, destination and expected return
-- Latest campus movement
-- Movement count and latest movement in the chosen period
-- Residence, room and bed
+## School Holiday Mode
 
-The current-status report is a live snapshot. The other reports still show every active student, with additional movement activity for the selected period.
+Open Admin > Settings.
 
-## Other exports
+When ON:
 
-The Detailed Activity Exports section provides individual campus movements, gate passes, gate duty and meals for a selected start and end date.
+- Students may submit passes without the Wednesday cutoff
+- School Administrator approval alone approves the pass
+- A pending pass that already has Administrator approval is automatically approved
 
+When OFF:
 
-## Student Leadership operational editing
+- Wednesday 4:00 pm cutoff applies
+- Administrator approval plus Principal, Dean or Director approval is required
 
-Student Leadership may update a student between On Campus and Off Campus and may edit basic residence, room, bed and accommodation status. These changes are written through protected database functions and recorded in the audit log. Student Leadership does not receive registration administration, fees, waivers or management-only settings.
+Turning normal mode back on does not cancel passes that were already approved during holidays.

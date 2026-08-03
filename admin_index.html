@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173a63">
+  <title>AMFCC School Administration</title>
+  <link rel="apple-touch-icon" href="assets_icon.png">
+  <link rel="stylesheet" href="shared_ui.css">
+  <link rel="stylesheet" href="dashboard_dashboard.css">
+  <link rel="stylesheet" href="admin_admin.css">
+</head>
+<body>
+<main class="container">
+  <div class="topbar admin-topbar">
+    <div>
+      <div class="heading-row"><h1>School Administration Dashboard</h1><span class="access-badge administrator">Admin only</span></div>
+      <p id="updated" class="muted">Not loaded</p>
+      <div id="holidayBanner" class="notice warn" style="display:none;margin-top:8px">School Holiday Mode is ON. Passes may be submitted at any time and require only School Administrator approval.</div>
+    </div>
+    <div class="term-context">
+      <label for="termSelect">Fee term</label>
+      <select id="termSelect"></select>
+    </div>
+  </div>
+
+  <div class="grid six metrics-grid">
+    <button type="button" class="card metric metric-filter" data-filter-tab="campus" data-filter-value="IN"><b id="onCount">0</b><span>On campus</span></button>
+    <button type="button" class="card metric metric-filter" data-filter-tab="campus" data-filter-value="OUT"><b id="offCount">0</b><span>Off campus</span></button>
+    <button type="button" class="card metric metric-filter sick" data-filter-tab="campus" data-filter-value="BED_REST"><b id="bedRestCount">0</b><span>On bed rest</span></button>
+    <button type="button" class="card metric metric-filter" data-filter-tab="passes" data-filter-value="pending"><b id="pendingCount">0</b><span>Pending passes</span></button>
+    <button type="button" class="card metric metric-filter" data-filter-tab="passes" data-filter-value="OVERDUE"><b id="overdueCount">0</b><span>Overdue</span></button>
+    <button type="button" class="card metric metric-filter fees-metric" data-filter-tab="fees" data-filter-value="UNPAID"><b id="unpaidCount">0</b><span>Fees not paid</span></button>
+  </div>
+
+  <div class="tabs admin-tabs">
+    <button class="active" data-tab="campus">Campus</button>
+    <button data-tab="accommodation">Accommodation</button>
+    <button data-tab="passes">Gate passes</button>
+    <button data-tab="fees">Fees</button>
+    <button data-tab="duty">Gate duty</button>
+    <button data-tab="recent">Recent movements</button>
+    <button data-tab="reports">Reports</button>
+    <button data-tab="settings">Settings</button>
+  </div>
+
+  <section id="campus" class="section active card">
+    <div class="toolbar">
+      <input id="campusSearch" placeholder="Search student or registration">
+      <select id="campusFilter"><option value="ALL">All students</option><option value="IN">On campus</option><option value="OUT">Off campus</option><option value="UNKNOWN">Unknown</option><option value="BED_REST">On bed rest</option><option value="MATERNITY">Maternity</option></select>
+      <button id="refresh" class="btn primary">Refresh</button>
+    </div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Registration</th><th>Status</th><th>Health</th><th>Last movement</th><th>Action</th></tr></thead><tbody id="campusRows"></tbody></table></div>
+  </section>
+
+  <section id="accommodation" class="section card">
+    <div class="toolbar"><input id="accommodationSearch" placeholder="Search student, hostel or room"><select id="accommodationFilter"><option value="ALL">All students</option><option value="ALLOCATED">Allocated</option><option value="NOT_ALLOCATED">Not allocated</option><option value="FEES_UNPAID">Fees not paid</option><option value="BED_REST">On bed rest</option><option value="MATERNITY">Maternity</option></select></div>
+    <div id="accommodationTermNotice" class="notice info"></div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Registration</th><th>Residence</th><th>Room</th><th>Bed</th><th>Fees?</th><th>Status</th><th>Action</th></tr></thead><tbody id="accommodationRows"></tbody></table></div>
+  </section>
+
+  <section id="passes" class="section card">
+    <div class="toolbar"><input id="passSearch" placeholder="Search student, destination or registration"><select id="passFilter"><option value="ALL">All pass statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="departed">Departed</option><option value="returned">Returned</option><option value="rejected">Rejected</option><option value="cancelled">Cancelled</option><option value="OVERDUE">Overdue</option></select></div>
+    <div id="passRuleNotice" class="notice info"></div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Destination</th><th>Status and review</th><th>Departure</th></tr></thead><tbody id="passRows"></tbody></table></div>
+  </section>
+
+  <section id="fees" class="section card">
+    <div class="fees-heading"><div><h2>Student fee status</h2><p id="feeTermSummary" class="muted"></p></div><div class="fee-counts"><span class="fee-paid">✓ <b id="paidFeesCount">0</b> paid</span><span class="fee-unpaid">✕ <b id="unpaidFeesCount">0</b> not paid</span></div></div>
+    <div class="toolbar"><input id="feeSearch" placeholder="Search student or registration"><select id="feeFilter"><option value="ALL">All students</option><option value="PAID">Fees paid</option><option value="UNPAID">Fees not paid</option></select></div>
+    <div class="notice info">Click the fee status button to change it. All students were initially marked paid so Administration can correct only the exceptions.</div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Registration</th><th>Term</th><th>Due date</th><th>Fees?</th><th>Last updated</th></tr></thead><tbody id="feeRows"></tbody></table></div>
+  </section>
+
+  <section id="duty" class="section card"><h2>Gate duty today</h2><div class="table-wrap"><table class="data-table"><thead><tr><th>Time</th><th>Student</th><th>Registration</th><th>Direction</th><th>Source</th></tr></thead><tbody id="dutyRows"></tbody></table></div></section>
+  <section id="recent" class="section card"><h2>Recent campus movements</h2><div class="table-wrap"><table class="data-table"><thead><tr><th>Time</th><th>Student</th><th>Registration</th><th>Movement</th><th>Destination/pass</th></tr></thead><tbody id="recentRows"></tbody></table></div></section>
+
+  <section id="reports" class="section card">
+    <h2>Export reports</h2>
+    <div class="report-panel movement-report-panel">
+      <h3>Student movement status report</h3>
+      <p class="muted">Shows current campus, bed-rest, maternity, gate-pass and accommodation status for every active student.</p>
+      <div class="grid two report-controls"><div class="field"><label>Movement report period</label><select id="movementPeriod"><option value="current_status">Current status</option><option value="last_24_hours">Last 24 hours</option><option value="last_3_days">Last 3 days</option><option value="past_week">Past week</option></select></div><div class="field report-action-field"><label>Download</label><button id="exportMovements" class="btn primary">Download student movement CSV</button></div></div>
+      <div id="movementExportSummary" class="movement-export-summary" aria-live="polite"></div>
+    </div>
+    <div class="report-panel"><h3>Detailed activity exports</h3><div class="grid three"><div class="field"><label>Report</label><select id="reportType"><option value="campus">Individual campus movements</option><option value="passes">Gate passes</option><option value="gate_duty">Gate duty</option><option value="meals">Meals</option></select></div><div class="field"><label>Start date</label><input id="startDate" type="date"></div><div class="field"><label>End date</label><input id="endDate" type="date"></div></div><button id="exportReport" class="btn secondary" style="margin-top:12px">Download detailed CSV</button></div>
+  </section>
+
+  <section id="settings" class="section card">
+    <h2>Admin settings</h2>
+    <div class="setting-row holiday-setting"><div><h3>School Holiday Mode</h3><p class="muted">When ON, students may submit passes at any time. Only School Administrator approval is required. When OFF, the Wednesday 4:00 pm deadline and two-signature rule return.</p></div><label class="switch"><input id="holidayMode" type="checkbox"><span></span></label></div>
+    <div id="holidayRuleSummary" class="notice info"></div>
+    <div class="setting-row"><div><h3>Paper pass pilot mode</h3><p class="muted">Run electronic gate passes alongside paper passes.</p></div><label class="switch"><input id="pilotMode" type="checkbox"><span></span></label></div>
+    <div class="setting-row"><div style="flex:1"><h3>Pilot end date and time</h3><input id="pilotEnd" type="datetime-local"></div></div>
+    <div class="setting-row"><div><h3>Normal gate-pass deadline</h3><p class="muted">Used only when School Holiday Mode is OFF.</p></div><b>Wednesday 16:00</b></div>
+    <div class="setting-row"><div style="flex:1"><h3>Kiosk result duration</h3><p class="muted">Seconds the gate scan result remains visible.</p><input id="resultSeconds" type="number" min="1" max="10" step="0.1"></div></div>
+    <button id="saveSettings" class="btn primary" style="width:100%;margin-top:15px">Save settings</button>
+    <div id="settingsMessage" class="notice good" style="display:none"></div>
+  </section>
+</main>
+
+<div id="login" class="modal open"><div class="modalbox"><div style="text-align:center"><img src="assets_icon.png" width="72" style="border-radius:16px"><h2>School Administration</h2><p>Enter the Admin password.</p></div><div class="field"><input id="pin" class="pin-input" type="password" inputmode="numeric" maxlength="4"></div><p id="pinError" class="notice bad" style="display:none"></p><button id="loginBtn" class="btn primary" style="width:100%;margin-top:12px">Open Admin site</button></div></div>
+
+<div id="reviewModal" class="modal"><div class="modalbox"><h2>School Administrator gate-pass review</h2><div id="reviewDetails" class="review-details"></div><div class="notice info">This decision is recorded as School Administrator.</div><div class="field" style="margin-top:10px"><label>Comments or reason</label><textarea id="decisionComments"></textarea></div><div class="action-grid" style="margin-top:12px"><button class="btn good" data-decision="approved">Approve</button><button class="btn danger" data-decision="rejected">Reject</button><button class="btn secondary" data-decision="cancelled">Cancel pass</button></div><button id="closeReview" class="btn secondary" style="width:100%;margin-top:10px">Close</button></div></div>
+
+<div id="studentEditModal" class="modal"><div class="modalbox student-edit-modal"><h2>Edit student operations</h2><div id="studentEditSummary" class="review-details"></div><div class="edit-section"><h3>Campus status</h3><div class="field"><label>Current status</label><select id="editCampusStatus"><option value="">Keep current status</option><option value="IN">On campus</option><option value="OUT">Off campus</option></select></div><div class="field"><label>Reason or note</label><textarea id="editCampusNote" placeholder="Optional explanation"></textarea></div></div><div class="edit-section"><h3>Accommodation</h3><div class="grid two"><div class="field"><label>Residence</label><input id="editResidence"></div><div class="field"><label>Room</label><input id="editRoom"></div><div class="field"><label>Bed</label><input id="editBed"></div><div class="field"><label>Accommodation status</label><select id="editAccommodationStatus"><option value="waiting">Waiting</option><option value="allocated">Allocated</option><option value="checked_in">Checked in</option><option value="checked_out">Checked out</option></select></div></div><label class="check-row"><input id="removeAccommodation" type="checkbox"> Remove current accommodation allocation</label></div><button id="saveStudentEdit" class="btn primary" style="width:100%;margin-top:14px">Save changes</button><button id="closeStudentEdit" class="btn secondary" style="width:100%;margin-top:8px">Close</button></div></div>
+
+<div id="toast" class="modal"><div class="modalbox"><div id="toastBox" class="result-box"></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared_config.js"></script><script src="shared_supabase.js"></script><script src="shared_utils.js"></script><script src="admin_admin.js"></script>
+</body>
+</html>

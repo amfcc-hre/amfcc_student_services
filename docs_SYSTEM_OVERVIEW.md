@@ -1,26 +1,30 @@
 # System Overview
 
-AMFCC Student Services is one web platform with separate entry points for students, kitchen staff, clinic staff, the gate kiosk, Student Leadership and Management. It uses one Supabase database and the same five-digit student registration number across all modules.
+AMFCC Student Services is one platform with different pages for students, kitchen staff, clinic staff, gate guards, Student Leadership, Management and School Administration. Every module uses the same Supabase database and the same five-digit student registration number.
 
-## Modules
+## Pages and access
 
-1. Meal Check-In: student self check-in and PIN-protected kitchen totals and exports.
-2. Campus Gate: dedicated kiosk for campus IN/OUT movements.
-3. Gate Duty: a mode within the gate kiosk, selected with F1.
-4. Personal Gate Passes: electronic personal-leave requests and approvals.
-5. Clinic: password-protected bed-rest management.
-6. Administrative Dashboard: two password-controlled views for Management and Student Leadership.
-7. Accommodation: current residence and room information in the dashboard.
-8. Reports: movement status, individual gate movements, passes, gate duty and meals.
-9. Settings: Management-only operational settings.
+1. Student Services Home: public links for Meals, Gate Passes and Clinic.
+2. Meal Check-In: students use no password; kitchen staff use `1958`.
+3. Personal Gate Passes: students use their registration number and no password.
+4. Clinic: clinic staff use `1957` to manage bed rest.
+5. Gate Kiosk: no guard PIN; authorised device token required.
+6. Administrative Dashboard: Management uses `0593`; Student Leadership uses `1960`.
+7. Management Settings: Management uses `0593` for existing operational settings.
+8. School Administration site: Administration uses `1972` for all Management information, Administrator pass decisions, fees and School Holiday Mode.
 
-## Movement Status Reports
+## Term fees
 
-The Administrative Dashboard can export one-row-per-student status reports for Current Status, Last 24 Hours, Last 3 Days and Past Week. The reports identify who is on campus, on bed rest, on maternity status and currently out on a gate pass. They also include movement activity and current accommodation.
+Fees are a simple Paid or Not paid status for each student and each academic term. The seeded 2026 due dates are:
 
-Tanaka/Amalinda Shops, MDH and Town/Other can be selected at checkout when a student does not have an approved personal gate pass.
+- Term 1: 15 January 2026
+- Term 2: 5 May 2026
+- Term 3: 5 September 2026
 
+All active students were initially marked Paid. School Administration corrects students who have not paid.
 
-## Student Leadership operational edits
+## Gate-pass approval modes
 
-The Student Leadership dashboard can correct current campus status and maintain basic accommodation. It still excludes registration administration, fees, fee waivers, management settings and gate-pass approval decisions.
+Normal mode requires the School Administrator and one senior approval from the Principal, Dean or Director. The submission deadline is Wednesday at 4:00 pm.
+
+School Holiday Mode removes the Wednesday deadline. Only the School Administrator approval is required. School Holiday Mode is controlled from the Admin Settings section and is protected by password `1972`.

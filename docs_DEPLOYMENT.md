@@ -14,4 +14,4 @@
 The Supabase URL and publishable key are in `shared/config.js`. The publishable key is intended for browser use. Never place a Supabase service-role key in this repository.
 
 
-After replacing files, press Ctrl + F5 on the dashboard, kitchen and gate computers so the v5 service-worker cache is replaced.
+After replacing files, press Ctrl + F5 on the dashboard, kitchen and gate computers so the v6 service-worker cache is replaced.

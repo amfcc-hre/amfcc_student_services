@@ -26,3 +26,8 @@ All files are stored in the repository root because the school uploads through t
 Browser → Supabase RPC → PostgreSQL tables → JSON response → browser interface or CSV export.
 
 Direct anonymous table access is restricted. Browser functions call security-definer RPC functions that validate passwords, gate-device tokens and allowed operations before returning data.
+
+
+## Version 6 additions
+
+The private School Administration page (`admin_index.html`) calls Admin-only Supabase RPC functions protected by code `1972`. It returns the operational information available to Management plus fee status, Administrator gate-pass decisions and Holiday Mode settings. Fee data is not returned to Student Leadership or student-facing pages.

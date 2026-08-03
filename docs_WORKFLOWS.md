@@ -1,37 +1,34 @@
 # Workflows
 
-## Student Movement Status Export
+## Normal gate pass
 
-1. Open the Administrative Dashboard.
-2. Sign in with Management password `0593` or Student Leadership password `1960`.
-3. Open the Reports tab.
-4. Choose Current Status, Last 24 Hours, Last 3 Days or Past Week.
-5. Select Download Student Movement CSV.
-6. The database builds a current roster snapshot and adds movement activity for the chosen period.
-7. The downloaded report identifies students who are on campus, on bed rest, on maternity status or currently out on a gate pass.
+1. Student submits a personal pass before Wednesday at 4:00 pm.
+2. School Administration opens the Admin site and approves as School Administrator.
+3. Principal, Dean or Director opens the Management dashboard and approves.
+4. The pass becomes Approved after both sides have approved.
+5. The gate kiosk links the pass when the student scans out and records the return when the student scans in.
 
-## Gate Checkout Without a Personal Pass
+## School Holiday Mode gate pass
 
-1. Switch the gate kiosk to Check Out.
-2. Select destination 1, 2 or 3.
-3. Scan or enter the student registration number.
-4. The checkout is refused if the student has no approved pass and no destination was selected.
-5. An approved personal pass is linked automatically when available.
+1. School Administration turns School Holiday Mode ON in Admin > Settings.
+2. Students may submit a pass at any time before the future departure time.
+3. School Administration reviews it on the Admin site.
+4. Administrator approval alone changes the pass to Approved.
+5. No second signature is required.
 
-## Clinic Bed Rest
+## Fee status
 
-1. Open the Clinic page and enter password `1957`.
-2. Search for a student by name or registration number.
-3. Mark the student on bed rest and enter optional clinic notes.
-4. The dashboard displays a bed icon and supports the On Bed Rest filter.
+1. Open the School Administration site with `1972`.
+2. Select the academic term.
+3. Open Fees.
+4. Search for the student.
+5. Click Paid or Not paid to change the status.
+6. The same status appears as a check or cross in Admin > Accommodation.
 
+## Management gate-pass decision
 
-## Edit student operations from the dashboard
+Management no longer selects School Administrator. The available roles are Principal, Dean and Director. Administrator approval is completed only on the separate Admin site.
 
-1. Sign in with Management password 0593 or Student Leadership password 1960.
-2. Open Campus or Accommodation.
-3. Select Edit beside the student.
-4. Change On Campus/Off Campus and/or basic accommodation.
-5. Save. The system records the access level in the audit log.
+## Student movement reports
 
-Clicking the On Campus, Off Campus or On Bed Rest summary card opens the Campus list with the corresponding filter. Pending and Overdue cards open the Gate Pass list with the matching filter.
+School Administration, Management and Student Leadership may export Current Status, Last 24 Hours, Last 3 Days and Past Week. Reports include campus, bed-rest, maternity, gate-pass and accommodation status.

@@ -1,52 +1,86 @@
-AMFCC Student Services Platform v5 Full Stack Package
-Generated: 2026-08-03
+AMFCC Student Services Platform v6 Full Stack Package
+====================================================
 
-Upload all files directly to the GitHub repository root.
+This is a flat GitHub upload package. Extract the ZIP and upload every
+extracted file directly into the root of amfcc-hre/amfcc_student_services.
 
-Files:
-PACKAGE_MANIFEST.txt
-README.md
-UPLOAD_INSTRUCTIONS.txt
-assets_icon.png
-clinic_clinic.css
-clinic_clinic.js
-clinic_index.html
-dashboard_dashboard.css
-dashboard_dashboard.js
-dashboard_index.html
-database_migrations_001_student_services_platform_v2.sql
-database_migrations_002_clinic_gate_accommodation.sql
-database_migrations_003_student_movement_exports.sql
-database_migrations_004_dashboard_edits_kitchen_pin_tasha.sql
-docs_ADMIN_OPERATIONS.md
-docs_AMFCC_Student_Services_Platform_v2_Handover.docx
-docs_ARCHITECTURE.md
-docs_BACKUP_RECOVERY.md
-docs_CHANGE_GUIDE.md
-docs_CHANGE_LOG.md
-docs_DATABASE.md
-docs_DEPLOYMENT.md
-docs_DEVELOPER_HANDOVER.md
-docs_SYSTEM_OVERVIEW.md
-docs_WORKFLOWS.md
-gate_gate.css
-gate_gate.js
-gate_index.html
-index.html
-manifest.webmanifest
-meal_index.html
-meal_meal.css
-meal_meal.js
-passes_index.html
-passes_passes.css
-passes_passes.js
-settings_index.html
-settings_settings.css
-settings_settings.js
-shared_config.js
-shared_scanner.js
-shared_sounds.js
-shared_supabase.js
-shared_ui.css
-shared_utils.js
-sw.js
+Live pages after GitHub Pages publishes:
+- Student Services: https://amfcc-hre.github.io/amfcc_student_services/
+- Meals: https://amfcc-hre.github.io/amfcc_student_services/meal_index.html
+- Gate Passes: https://amfcc-hre.github.io/amfcc_student_services/passes_index.html
+- Clinic: https://amfcc-hre.github.io/amfcc_student_services/clinic_index.html
+- Gate Kiosk: https://amfcc-hre.github.io/amfcc_student_services/gate_index.html
+- Administrative Dashboard: https://amfcc-hre.github.io/amfcc_student_services/dashboard_index.html
+- Management Settings: https://amfcc-hre.github.io/amfcc_student_services/settings_index.html
+- School Administration: https://amfcc-hre.github.io/amfcc_student_services/admin_index.html
+
+Access codes:
+- School Administration: 1972
+- Management: 0593
+- Student Leadership: 1960
+- Kitchen staff: 1958
+- Clinic staff: 1957
+- Students: no password
+- Gate guards: no PIN; authorised gate-device token
+
+Database migration order for a fresh installation:
+1. database_migrations_001_student_services_platform_v2.sql
+2. database_migrations_002_clinic_gate_accommodation.sql
+3. database_migrations_003_student_movement_exports.sql
+4. database_migrations_004_dashboard_edits_kitchen_pin_tasha.sql
+5. database_migrations_005_admin_fees_holiday_mode.sql
+
+The live production Supabase database already has migration 005 applied.
+
+Files in this package: 50
+
+File list:
+- README.md
+- UPLOAD_INSTRUCTIONS.txt
+- admin_admin.css
+- admin_admin.js
+- admin_index.html
+- assets_icon.png
+- clinic_clinic.css
+- clinic_clinic.js
+- clinic_index.html
+- dashboard_dashboard.css
+- dashboard_dashboard.js
+- dashboard_index.html
+- database_migrations_001_student_services_platform_v2.sql
+- database_migrations_002_clinic_gate_accommodation.sql
+- database_migrations_003_student_movement_exports.sql
+- database_migrations_004_dashboard_edits_kitchen_pin_tasha.sql
+- database_migrations_005_admin_fees_holiday_mode.sql
+- docs_ADMIN_OPERATIONS.md
+- docs_AMFCC_Student_Services_Platform_v6_Handover.docx
+- docs_ARCHITECTURE.md
+- docs_BACKUP_RECOVERY.md
+- docs_CHANGE_GUIDE.md
+- docs_CHANGE_LOG.md
+- docs_DATABASE.md
+- docs_DEPLOYMENT.md
+- docs_DEVELOPER_HANDOVER.md
+- docs_SYSTEM_OVERVIEW.md
+- docs_WORKFLOWS.md
+- gate_gate.css
+- gate_gate.js
+- gate_index.html
+- index.html
+- manifest.webmanifest
+- meal_index.html
+- meal_meal.css
+- meal_meal.js
+- passes_index.html
+- passes_passes.css
+- passes_passes.js
+- settings_index.html
+- settings_settings.css
+- settings_settings.js
+- shared_config.js
+- shared_scanner.js
+- shared_sounds.js
+- shared_supabase.js
+- shared_ui.css
+- shared_utils.js
+- sw.js

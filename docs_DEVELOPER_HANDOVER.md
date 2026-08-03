@@ -50,3 +50,8 @@ This guide enables a replacement developer or IT officer to maintain the system 
 
 ## Ownership information to maintain
 Keep current names and contact details for the system owner, GitHub account owner, Supabase account owner, school administrator, principal/dean/director approvers, and the person responsible for the gate PC.
+
+
+## Version 6 administration module
+
+Apply `database_migrations_005_admin_fees_holiday_mode.sql` after migrations 001 to 004 on a fresh database. The live production database already has migration 005. The Admin website consists of `admin_index.html`, `admin_admin.css` and `admin_admin.js`. Keep the Admin URL and password restricted. Update `sw.js` whenever these files change.

@@ -14,7 +14,7 @@
   <div class="topbar">
     <div>
       <div class="heading-row"><h1>Administrative Dashboard</h1><span id="accessBadge" class="access-badge">Not signed in</span></div>
-      <p id="updated" class="muted">Not loaded</p>
+      <p id="updated" class="muted">Not loaded</p><div id="holidayBanner" class="notice warn" style="display:none;margin-top:8px">School Holiday Mode is ON. Gate passes require School Administrator approval only and the Wednesday deadline is paused.</div>
     </div>
     <div><a id="settingsLink" class="dashboard-link" href="settings_index.html">Settings</a></div>
   </div>
@@ -107,7 +107,7 @@
 
 <div id="login" class="modal open"><div class="modalbox"><div style="text-align:center"><img src="assets_icon.png" width="72" style="border-radius:16px"><h2>Administrative Dashboard</h2><p>Enter the Management or Student Leadership password.</p></div><div class="field"><input id="pin" class="pin-input" type="password" inputmode="numeric" maxlength="4"></div><p id="pinError" class="notice bad" style="display:none"></p><button id="loginBtn" class="btn primary" style="width:100%;margin-top:12px">Open dashboard</button></div></div>
 
-<div id="reviewModal" class="modal"><div class="modalbox"><h2>Review gate pass</h2><div id="reviewDetails" class="review-details"></div><div class="field"><label>Who is making this decision?</label><select id="actorRole"><option value="">Choose role</option><option value="administrator">School Administrator</option><option value="principal">Principal</option><option value="dean">Dean</option><option value="director">Director</option></select></div><div class="field" style="margin-top:10px"><label>Comments or reason</label><textarea id="decisionComments"></textarea></div><div class="action-grid" style="margin-top:12px"><button class="btn good" data-decision="approved">Approve</button><button class="btn danger" data-decision="rejected">Reject</button><button class="btn secondary" data-decision="cancelled">Cancel pass</button></div><button id="closeReview" class="btn secondary" style="width:100%;margin-top:10px">Close</button></div></div>
+<div id="reviewModal" class="modal"><div class="modalbox"><h2>Review gate pass</h2><div id="reviewDetails" class="review-details"></div><div class="field"><label>Which senior staff role is making this decision?</label><select id="actorRole"><option value="">Choose role</option><option value="principal">Principal</option><option value="dean">Dean</option><option value="director">Director</option></select></div><div class="field" style="margin-top:10px"><label>Comments or reason</label><textarea id="decisionComments"></textarea></div><div class="action-grid" style="margin-top:12px"><button class="btn good" data-decision="approved">Approve</button><button class="btn danger" data-decision="rejected">Reject</button><button class="btn secondary" data-decision="cancelled">Cancel pass</button></div><button id="closeReview" class="btn secondary" style="width:100%;margin-top:10px">Close</button></div></div>
 
 <div id="studentEditModal" class="modal"><div class="modalbox student-edit-modal">
   <h2>Edit student operations</h2>
