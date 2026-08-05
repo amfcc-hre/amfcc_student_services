@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AMFCC Site Refresh</title>
+  <style>
+    body{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:#eef2f6;color:#17202a;margin:0;padding:24px}
+    main{max-width:680px;margin:40px auto;background:#fff;border-radius:18px;padding:26px;box-shadow:0 8px 26px #18243618}
+    h1{color:#173a63}
+    .status{padding:14px;border-radius:12px;background:#eaf1ff;color:#1b3a7a;font-weight:700}
+    .done{background:#e7f7ec;color:#0f6b39}
+    a{display:block;margin-top:10px;padding:13px 16px;border-radius:12px;background:#173a63;color:#fff;text-decoration:none;font-weight:800;text-align:center}
+  </style>
+</head>
+<body>
+<main>
+  <h1>AMFCC Site Refresh</h1>
+  <p id="status" class="status">Clearing the old website files…</p>
+  <div id="links" hidden>
+    <a href="dashboard_index.html?version=8.4">Open Administrative Dashboard</a>
+    <a href="admin_index.html?version=8.4">Open School Administration</a>
+    <a href="clinic_index.html?version=8.4">Open Clinic</a>
+    <a href="settings_index.html?version=8.4">Open Management Settings</a>
+    <a href="meal_index.html?version=8.4">Open Meal Check-In</a>
+  </div>
+</main>
+<script>
+(async () => {
+  const status = document.getElementById('status');
+  try {
+    if ('serviceWorker' in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map(registration => registration.unregister()));
+    }
+
+    if ('caches' in window) {
+      const names = await caches.keys();
+      await Promise.all(names.map(name => caches.delete(name)));
+    }
+
+    sessionStorage.clear();
+    localStorage.removeItem('amfcc_dashboard_pin');
+    localStorage.removeItem('amfcc_admin_pin');
+    localStorage.removeItem('amfcc_clinic_pin');
+
+    status.textContent = 'Old files cleared successfully. Choose the site to reopen.';
+    status.classList.add('done');
+    document.getElementById('links').hidden = false;
+  } catch (error) {
+    status.textContent = 'Refresh completed with a warning. Close the browser completely, reopen it, then try the links below.';
+    document.getElementById('links').hidden = false;
+    console.error(error);
+  }
+})();
+</script>
+</body>
+</html>
