@@ -2,31 +2,152 @@
 .pass-card.pending{border-left-color:#e1a72d}
 .pass-card.approved,.pass-card.departed,.pass-card.returned{border-left-color:#2d9b5e}
 .pass-card.rejected,.pass-card.cancelled{border-left-color:#c7473d}
+
 .pass-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
 .pass-head h3{margin:0}
+
 .approval-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
 .approval{padding:10px;border-radius:10px;background:#f1f4f7;font-size:13px}
 .approval strong{display:block}
+
 .form-actions{display:flex;gap:9px;flex-wrap:wrap}
 .form-actions .btn{flex:1}
+
 .board-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
 .board-heading h2{margin:0 0 4px}
 .btn.compact{padding:9px 12px}
-.approved-pass-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;border-bottom:1px solid #e4e9ef}
+
+.approved-pass-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:12px 0;
+  border-bottom:1px solid #e4e9ef
+}
 .approved-pass-row:last-child{border-bottom:0}
-.companion-panel{margin:16px 0;padding:16px;border:1px solid #d6dde5;border-radius:14px;background:#f7f9fb}
-.companion-panel h3{margin:0 0 5px}
-.companion-entry{display:grid;grid-template-columns:1fr auto;gap:9px}
-.companion-entry input{width:100%;padding:13px 14px;border:2px solid #d6dde5;border-radius:12px}
-.companion-list{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.companion-chip{display:inline-flex;align-items:center;gap:7px;background:#eaf1ff;color:#173a63;border-radius:999px;padding:7px 10px;font-weight:800}
-.companion-chip button{border:0;background:transparent;color:#9a2020;font-size:18px;line-height:1;cursor:pointer}
-.pass-people{padding:12px;border-radius:12px;background:#f1f4f7;margin:12px 0}
+
+.student-confirmation{margin:12px 0 0;font-weight:800}
+.student-confirmation.confirmed{
+  padding:10px 12px;
+  border-radius:10px;
+  background:#e7f7ec;
+  color:#0f6b39
+}
+.bad-text{color:#9a2020}
+
+.people-section{
+  margin:18px 0;
+  padding:18px;
+  border:2px solid #d6dde5;
+  border-radius:16px;
+  background:#f8fafc
+}
+
+.people-heading{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+  margin-bottom:14px
+}
+.people-heading h3{margin:0 0 4px}
+
+.people-count{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#eaf1ff;
+  color:#173a63;
+  font-size:13px;
+  font-weight:900;
+  white-space:nowrap
+}
+
+.registration-add-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:end
+}
+.registration-add-row .btn{min-height:49px}
+
+.lookup-message{
+  min-height:22px;
+  margin:10px 0;
+  font-weight:750;
+  font-size:14px
+}
+.lookup-message.good{color:#0f6b39}
+.lookup-message.warn{color:#8a5300}
+.lookup-message.bad{color:#9a2020}
+.lookup-message.checking{color:#173a63}
+
+.verified-people-list{
+  display:grid;
+  gap:9px
+}
+
+.verified-person{
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:11px;
+  padding:12px;
+  border:1px solid #c9e8d4;
+  border-radius:12px;
+  background:#fff
+}
+
+.verified-icon{
+  display:grid;
+  place-items:center;
+  width:31px;
+  height:31px;
+  border-radius:50%;
+  background:#e7f7ec;
+  color:#0f6b39;
+  font-weight:950
+}
+
+.verified-person-details{
+  display:flex;
+  flex-direction:column;
+  gap:3px
+}
+.verified-person-details span{
+  color:#66727f;
+  font-size:13px
+}
+
+.remove-person{
+  border:0;
+  border-radius:9px;
+  padding:8px 10px;
+  background:#fdeaea;
+  color:#9a2020;
+  font-weight:850;
+  cursor:pointer
+}
+
+.small-empty{padding:15px}
+
+.pass-people{
+  padding:12px;
+  border-radius:12px;
+  background:#f1f4f7;
+  margin:12px 0
+}
 .pass-people ul{margin:7px 0 0;padding-left:20px}
+
 @media(max-width:600px){
   .approval-grid{grid-template-columns:1fr}
-  .pass-head,.board-heading{display:block}
+  .pass-head,.board-heading,.people-heading{display:block}
   .pass-head .pill{margin-top:8px}
   .board-heading .btn{margin-top:10px;width:100%}
-  .companion-entry{grid-template-columns:1fr}
+  .people-count{margin-top:8px}
+  .registration-add-row{grid-template-columns:1fr}
+  .registration-add-row .btn{width:100%}
+  .verified-person{grid-template-columns:auto 1fr}
+  .remove-person{grid-column:1/-1;width:100%}
 }
