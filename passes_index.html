@@ -7,8 +7,8 @@
   <title>AMFCC Personal Gate Passes</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets_icon.png">
-  <link rel="stylesheet" href="shared_ui.css?v=9.2">
-  <link rel="stylesheet" href="passes_passes.css?v=9.2">
+  <link rel="stylesheet" href="shared_ui.css?v=9.3">
+  <link rel="stylesheet" href="passes_passes.css?v=9.3">
 </head>
 <body>
 <main class="container narrow">
@@ -41,14 +41,17 @@
   </section>
 
   <section class="card">
-    <div class="field">
-      <label>Your registration number</label>
+    <div class="field student-search-field">
+      <label>Your name or registration number</label>
       <input
         id="reg"
-        inputmode="numeric"
-        maxlength="12"
-        placeholder="Example: 25001"
-        autocomplete="off">
+        type="text"
+        maxlength="100"
+        placeholder="Start typing your name or registration number"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-controls="applicantSearchResults">
+      <div id="applicantSearchResults" class="student-search-results" hidden></div>
     </div>
 
     <div class="form-actions" style="margin-top:12px">
@@ -56,7 +59,9 @@
       <button id="showForm" class="btn secondary">Request a new pass</button>
     </div>
 
-    <p id="studentName" class="student-confirmation muted"></p>
+    <p id="studentName" class="student-confirmation muted">
+      Search for yourself, then select the correct name.
+    </p>
   </section>
 
   <section id="requestSection" class="card" style="display:none">
@@ -97,24 +102,27 @@
         <div>
           <h3>Add people to this pass</h3>
           <p class="muted">
-            This section is optional. Leave it empty when applying only for yourself.
+            Search by name or registration number. This section is optional.
           </p>
         </div>
         <span id="peopleCount" class="people-count">0 added</span>
       </div>
 
       <div class="registration-add-row">
-        <div class="field">
-          <label>Registration number</label>
+        <div class="field student-search-field">
+          <label>Name or registration number</label>
           <input
             id="companionReg"
-            inputmode="numeric"
-            maxlength="12"
-            placeholder="Enter registration number"
-            autocomplete="off">
+            type="text"
+            maxlength="100"
+            placeholder="Start typing a name or registration number"
+            autocomplete="off"
+            aria-autocomplete="list"
+            aria-controls="companionSearchResults">
+          <div id="companionSearchResults" class="student-search-results" hidden></div>
         </div>
         <button id="addCompanion" type="button" class="btn secondary">
-          Find and add
+          Add selected person
         </button>
       </div>
 
@@ -142,7 +150,7 @@
     <h2>My passes</h2>
     <div id="passes">
       <div class="empty">
-        Enter your registration number to view gate passes.
+        Search for yourself above to view your gate passes.
       </div>
     </div>
   </section>
@@ -155,7 +163,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="shared_config.js"></script>
 <script src="shared_supabase.js"></script>
-<script src="shared_utils.js?v=9.2"></script>
-<script src="passes_passes.js?v=9.2"></script>
+<script src="shared_utils.js?v=9.3"></script>
+<script src="passes_passes.js?v=9.3"></script>
 </body>
 </html>

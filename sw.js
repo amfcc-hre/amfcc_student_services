@@ -1,4 +1,4 @@
-const CACHE='amfcc-student-services-platform-v9-2-five-digit-validation';
+const CACHE='amfcc-student-services-platform-v9-3-name-or-registration-search';
 
 const CORE=[
   './',
