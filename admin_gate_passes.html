@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173a63">
+  <title>AMFCC Admin Gate Passes</title>
+  <link rel="apple-touch-icon" href="assets_icon.png">
+  <link rel="stylesheet" href="shared_ui.css?v=9.0">
+  <link rel="stylesheet" href="dashboard_dashboard.css">
+  <link rel="stylesheet" href="admin_admin.css?v=9.0">
+  <link rel="stylesheet" href="admin_gate_passes.css?v=9.0">
+</head>
+<body>
+<main id="adminPage" class="container" hidden>
+  <div class="topbar">
+    <div>
+      <a class="back" href="admin_index.html">← School Administration</a>
+      <h1>Gate Pass Administration</h1>
+      <p id="updated" class="muted">Not loaded</p>
+    </div>
+    <button id="refresh" class="btn primary">Refresh</button>
+  </div>
+
+  <section class="card">
+    <div class="toolbar">
+      <input id="passSearch" placeholder="Search student, registration or destination">
+      <select id="passFilter">
+        <option value="ALL">All statuses</option>
+        <option value="pending">Pending</option>
+        <option value="approved">Approved</option>
+        <option value="departed">Departed</option>
+        <option value="returned">Returned</option>
+        <option value="rejected">Rejected</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+    <div class="notice info">Open a pass to edit its departure and return date or time. You can save the dates only, or save the dates while approving the pass.</div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead><tr><th>Student</th><th>Destination</th><th>Status</th><th>Departure</th><th>Action</th></tr></thead>
+        <tbody id="passRows"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<div id="login" class="modal open">
+  <div class="modalbox">
+    <div style="text-align:center">
+      <img src="assets_icon.png" width="72" style="border-radius:16px">
+      <h2>Gate Pass Administration</h2>
+      <p>Enter the School Administration password.</p>
+    </div>
+    <div class="field"><input id="pin" class="pin-input" type="password" inputmode="numeric" maxlength="4"></div>
+    <p id="pinError" class="notice bad" style="display:none"></p>
+    <button id="loginBtn" class="btn primary" style="width:100%;margin-top:12px">Open gate passes</button>
+  </div>
+</div>
+
+<div id="reviewModal" class="modal">
+  <div class="modalbox pass-review-box">
+    <h2>Review gate pass</h2>
+    <div id="reviewDetails" class="review-details"></div>
+
+    <div class="edit-section">
+      <h3>Edit travel dates and times</h3>
+      <div class="grid two">
+        <div class="field"><label>Departure</label><input id="reviewDeparture" type="datetime-local"></div>
+        <div class="field"><label>Expected return</label><input id="reviewExpectedReturn" type="datetime-local"></div>
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:12px">
+      <label>Comments or reason</label>
+      <textarea id="decisionComments" placeholder="Required for rejection or cancellation"></textarea>
+    </div>
+
+    <button id="saveSchedule" class="btn secondary" style="width:100%;margin-top:12px">Save date and time changes</button>
+
+    <div class="action-grid" style="margin-top:12px">
+      <button class="btn good" data-decision="approved">Save &amp; Approve</button>
+      <button class="btn danger" data-decision="rejected">Reject</button>
+      <button class="btn secondary" data-decision="cancelled">Cancel pass</button>
+    </div>
+
+    <button id="closeReview" class="btn secondary" style="width:100%;margin-top:10px">Close</button>
+  </div>
+</div>
+
+<div id="toast" class="modal"><div class="modalbox"><div id="toastBox" class="result-box"></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared_config.js"></script>
+<script src="shared_supabase.js"></script>
+<script src="shared_utils.js?v=9.0"></script>
+<script src="admin_gate_passes.js?v=9.0"></script>
+</body>
+</html>

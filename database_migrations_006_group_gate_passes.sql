@@ -1,0 +1,18 @@
+-- AMFCC group gate-pass feature was applied directly to production Supabase.
+-- Supabase migration history entries:
+-- 1. gate_pass_members_schema
+-- 2. group_gate_pass_student_functions
+-- 3. admin_gate_pass_schedule_review
+-- 4. shared_gate_pass_gate_scanning
+--
+-- The applied schema includes:
+-- public.gate_pass_members
+-- public.student_submit_gate_pass_v2(...)
+-- public.student_gate_pass_status_v2(text)
+-- public.public_approved_gate_passes()
+-- public.admin_gate_pass_review_details(text,uuid)
+-- public.admin_review_gate_pass(...)
+-- updated public.gate_record_movement_v3(...)
+--
+-- This file is a repository marker. The production database changes have
+-- already been applied and verified through the Supabase migration system.

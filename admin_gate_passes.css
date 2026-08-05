@@ -1,0 +1,7 @@
+.pass-review-box{width:min(760px,100%)}
+.review-people{margin:6px 0 16px;padding-left:20px}
+.edit-section{margin-top:16px;padding:16px;border-radius:14px;background:#f1f4f7}
+.edit-section h3{margin-top:0}
+.action-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.compact-btn{padding:9px 12px}
+@media(max-width:650px){.action-grid{grid-template-columns:1fr}}
