@@ -12,9 +12,15 @@ let selectedCheckoutOption=null;
 let schoolHolidayMode=false;
 let scanTimer=null,resultTimer=null,isRecording=false;
 
+function manualIsOpen(){return $('manual').classList.contains('open');}
 function focusScanner(){
-  if(!$('manual').classList.contains('open')&&!$('result').classList.contains('open')){
-    setTimeout(()=>$('scannerInput').focus(),50);
+  if(!manualIsOpen()&&!$('result').classList.contains('open')){
+    const manualReg=$('manualReg');
+    manualReg.disabled=true;
+    if(document.activeElement===manualReg)manualReg.blur();
+    setTimeout(()=>{
+      if(!manualIsOpen()&&!$('result').classList.contains('open'))$('scannerInput').focus({preventScroll:true});
+    },50);
   }
 }
 function updateClock(){
@@ -130,9 +136,28 @@ async function record(raw,source='scanner'){
   if(data?.status==='invalid_direction')return showResult('bad','INVALID GATE MODE',data);
   showResult('bad','NOT RECORDED',data||{message:'Please see security.'});
 }
-function openManual(){$('manual').classList.add('open');$('manualReg').focus();}
-function closeManual(){$('manual').classList.remove('open');$('manualReg').value='';focusScanner();}
-function manualRecord(){const reg=$('manualReg').value;closeManual();record(reg,'manual');}
+function openManual(){
+  const manualReg=$('manualReg');
+  $('scannerInput').value='';
+  clearTimeout(scanTimer);
+  $('manual').classList.add('open');
+  manualReg.disabled=false;
+  manualReg.value='';
+  setTimeout(()=>manualReg.focus({preventScroll:true}),50);
+}
+function closeManual(){
+  const manualReg=$('manualReg');
+  $('manual').classList.remove('open');
+  manualReg.value='';
+  manualReg.disabled=true;
+  manualReg.blur();
+  focusScanner();
+}
+function manualRecord(){
+  const reg=$('manualReg').value;
+  closeManual();
+  record(reg,'manual');
+}
 
 $('scannerInput').addEventListener('input',event=>{
   clearTimeout(scanTimer);
@@ -170,12 +195,22 @@ $('scannerInput').addEventListener('keydown',event=>{
 $('result').onclick=hideResult;
 $('manualRecord').onclick=manualRecord;
 $('manualClose').onclick=closeManual;
-$('manualReg').onkeydown=e=>{if(e.key==='Enter')manualRecord();};
+$('manualReg').onkeydown=e=>{
+  if(e.key==='Enter'){e.preventDefault();manualRecord();}
+  else if(e.key==='Escape'){e.preventDefault();closeManual();}
+};
+$('manualReg').addEventListener('focus',()=>{
+  if(!manualIsOpen())focusScanner();
+});
+document.addEventListener('focusin',event=>{
+  if(event.target===$('manualReg')&&!manualIsOpen())focusScanner();
+});
 document.querySelectorAll('[data-destination]').forEach(button=>button.onclick=()=>selectDestination(button.dataset.destination));
 document.addEventListener('keydown',event=>{
   AMFCCSounds.unlock();
   if(event.ctrlKey&&event.shiftKey&&event.key.toLowerCase()==='a'){event.preventDefault();openManual();return;}
-  if($('manual').classList.contains('open')){if(event.key==='Escape')closeManual();return;}
+  if(manualIsOpen()){if(event.key==='Escape'){event.preventDefault();closeManual();}return;}
+  if(document.activeElement===$('manualReg')){event.preventDefault();focusScanner();return;}
   if(event.key==='F1'){event.preventDefault();toggleModule();return;}
   if(event.code==='Space'){event.preventDefault();toggleDirection();return;}
   if(event.key==='Escape'){$('scannerInput').value='';clearDestination();hideResult();}
@@ -183,4 +218,5 @@ document.addEventListener('keydown',event=>{
 document.addEventListener('click',focusScanner);
 window.addEventListener('online',heartbeat);
 window.addEventListener('offline',()=>setConnection(false,false));
+$('manualReg').disabled=true;
 renderMode(false);updateClock();setInterval(updateClock,1000);heartbeat();setInterval(heartbeat,15000);focusScanner();registerSW();

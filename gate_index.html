@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets_icon.png">
   <link rel="stylesheet" href="shared_ui.css">
-  <link rel="stylesheet" href="gate_gate.css">
+  <link rel="stylesheet" href="gate_gate.css?v=8.1">
 </head>
 <body>
   <div id="terminal" class="campus in">
@@ -63,7 +63,7 @@
     <div class="manualbox">
       <h2>Guard manual entry</h2>
       <p class="muted">Use only when a student ID card or QR code cannot be scanned.</p>
-      <div class="field"><label>Registration number</label><input id="manualReg" inputmode="numeric" maxlength="5"></div>
+      <div class="field"><label>Registration number</label><input id="manualReg" inputmode="numeric" maxlength="5" autocomplete="off" disabled></div>
       <button id="manualRecord" class="btn primary" style="width:100%;margin-top:12px">Record</button>
       <button id="manualClose" class="btn secondary" style="width:100%;margin-top:8px">Close</button>
       <p class="muted">Ctrl + Shift + A opens this panel.</p>
@@ -75,6 +75,6 @@
   <script src="shared_supabase.js"></script>
   <script src="shared_utils.js"></script>
   <script src="shared_sounds.js"></script>
-  <script src="gate_gate.js"></script>
+  <script src="gate_gate.js?v=8.1"></script>
 </body>
 </html>
