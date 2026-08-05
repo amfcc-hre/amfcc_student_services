@@ -96,12 +96,12 @@ async function findAndAddCompanion(){
 
   setLookupMessage('','');
 
-  if(!/^\\d{5}$/.test(registrationNumber)){
+  if(!/^\d{5}$/.test(registrationNumber)){
     setLookupMessage('bad','Enter a valid five-digit registration number.');
     return;
   }
 
-  if(!/^\\d{5}$/.test(applicantRegistration)){
+  if(!/^\d{5}$/.test(applicantRegistration)){
     setLookupMessage(
       'bad',
       'Enter your own registration number at the top of the page first.'
@@ -345,7 +345,7 @@ function renderPasses(data){
 async function loadPasses(){
   const registrationNumber=normalizeReg($('reg').value);
 
-  if(!/^\\d{5}$/.test(registrationNumber)){
+  if(!/^\d{5}$/.test(registrationNumber)){
     $('studentName').className='student-confirmation bad-text';
     $('studentName').textContent='Enter a valid five-digit registration number.';
 
@@ -393,7 +393,7 @@ function validateSubmission(){
   const departure=$('departure').value;
   const expectedReturn=$('expectedReturn').value;
 
-  if(!/^\\d{5}$/.test(registrationNumber)){
+  if(!/^\d{5}$/.test(registrationNumber)){
     return 'Enter your valid five-digit registration number.';
   }
 
@@ -518,7 +518,7 @@ $('showForm').onclick=()=>{
 
   if(open){
     const normalized=normalizeReg($('reg').value);
-    if(/^\\d{5}$/.test(normalized)){
+    if(/^\d{5}$/.test(normalized)){
       $('reg').value=normalized;
       loadPasses();
     }

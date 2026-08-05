@@ -1,4 +1,4 @@
-const CACHE='amfcc-student-services-platform-v9-1-gate-pass-name-lookup';
+const CACHE='amfcc-student-services-platform-v9-2-five-digit-validation';
 
 const CORE=[
   './',
