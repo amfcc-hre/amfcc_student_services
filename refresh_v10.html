@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AMFCC Version 10 Refresh</title>
+  <style>
+    body{font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;background:#eef2f6;color:#17202a;margin:0;padding:24px}
+    main{max-width:720px;margin:38px auto;background:#fff;border-radius:18px;padding:26px;box-shadow:0 8px 26px #18243618}
+    h1{color:#173a63}.status{padding:14px;border-radius:12px;background:#eaf1ff;color:#1b3a7a;font-weight:750}.done{background:#e7f7ec;color:#0f6b39}
+    a{display:block;margin-top:10px;padding:13px 16px;border-radius:12px;background:#173a63;color:#fff;text-decoration:none;font-weight:850;text-align:center}
+  </style>
+</head>
+<body>
+<main>
+  <h1>AMFCC Version 10 Refresh</h1>
+  <p id="status" class="status">Clearing old website files…</p>
+  <div id="links" hidden>
+    <a href="dashboard_index.html?v=10.0">Open Senior Staff / Student Leadership</a>
+    <a href="admin_index.html?v=10.0">Open School Administration</a>
+    <a href="admin_gate_passes.html?v=10.0">Open Admin Gate Passes</a>
+    <a href="clinic_index.html?v=10.0">Open Clinic</a>
+  </div>
+</main>
+<script>
+(async()=>{
+  const status=document.getElementById('status');
+  try{
+    if('serviceWorker' in navigator){
+      const registrations=await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map(registration=>registration.unregister()));
+    }
+    if('caches' in window){
+      const names=await caches.keys();
+      await Promise.all(names.map(name=>caches.delete(name)));
+    }
+    sessionStorage.clear();
+    status.textContent='Old files cleared. Open the required site below.';
+    status.classList.add('done');
+  }catch(error){
+    status.textContent='Refresh completed with a warning. Close the browser completely after opening the required link.';
+    console.error(error);
+  }
+  document.getElementById('links').hidden=false;
+})();
+</script>
+</body>
+</html>
