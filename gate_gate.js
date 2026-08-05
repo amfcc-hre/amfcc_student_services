@@ -3,11 +3,13 @@ const DEVICE_TOKEN=APP_CONFIG.GATE_DEVICE_TOKEN;
 const DESTINATIONS={
   '1':'Tanaka/Amalinda Shops',
   '2':'MDH',
-  '3':'Town/Other'
+  '3':'Town/Other',
+  '4':'Holiday'
 };
 let moduleMode=localStorage.getItem('amfcc_terminal_module')||'campus';
 let direction=localStorage.getItem('amfcc_'+moduleMode+'_direction')||'IN';
 let selectedCheckoutOption=null;
+let schoolHolidayMode=false;
 let scanTimer=null,resultTimer=null,isRecording=false;
 
 function focusScanner(){
@@ -21,8 +23,17 @@ function updateClock(){
   $('date').textContent=now.toLocaleDateString('en-ZW',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
 function clearDestination(){selectedCheckoutOption=null;renderDestination();}
+function destinationAllowed(code){return Boolean(DESTINATIONS[code])&&(code!=='4'||schoolHolidayMode);}
+function setHolidayMode(enabled){
+  schoolHolidayMode=Boolean(enabled);
+  const holidayButton=$('holidayDestination');
+  holidayButton.hidden=!schoolHolidayMode;
+  $('checkoutOptions').classList.toggle('holiday-mode',schoolHolidayMode);
+  if(!schoolHolidayMode&&selectedCheckoutOption==='4')selectedCheckoutOption=null;
+  renderMode(false);
+}
 function selectDestination(code,announce=true){
-  if(moduleMode!=='campus'||direction!=='OUT'||!DESTINATIONS[code])return;
+  if(moduleMode!=='campus'||direction!=='OUT'||!destinationAllowed(code))return;
   selectedCheckoutOption=code;
   renderDestination();
   if(announce)AMFCCSounds.modeOut();
@@ -37,7 +48,9 @@ function renderKeyLegend(){
   if(moduleMode==='duty'){
     $('keyLegend').textContent='SPACE: DUTY IN / OUT · F1: CAMPUS MOVEMENT · CTRL+SHIFT+A: MANUAL · ESC: CLEAR';
   }else if(direction==='OUT'){
-    $('keyLegend').textContent='1: TANAKA/AMALINDA · 2: MDH · 3: TOWN/OTHER · SPACE: CHECK IN · F1: GATE DUTY';
+    $('keyLegend').textContent=schoolHolidayMode
+      ?'1: TANAKA/AMALINDA · 2: MDH · 3: TOWN/OTHER · 4: HOLIDAY · SPACE: CHECK IN · F1: GATE DUTY'
+      :'1: TANAKA/AMALINDA · 2: MDH · 3: TOWN/OTHER · SPACE: CHECK IN · F1: GATE DUTY';
   }else{
     $('keyLegend').textContent='SPACE: CHECK OUT · F1: GATE DUTY · CTRL+SHIFT+A: MANUAL · ESC: CLEAR';
   }
@@ -47,7 +60,7 @@ function renderMode(announce=false){
   $('module').textContent=moduleMode==='campus'?'CAMPUS MOVEMENT':'GATE DUTY';
   $('mode').textContent=(moduleMode==='campus'?'CHECK ':'GATE DUTY ')+(direction==='IN'?'IN':'OUT');
   $('subtitle').textContent=moduleMode==='campus'?'Campus movement terminal':'Gate duty attendance';
-  $('hint').textContent=moduleMode==='campus'?(direction==='OUT'?'Select 1, 2 or 3 if there is no approved gate pass':'Ready for the next student'):'Scan to record gate duty';
+  $('hint').textContent=moduleMode==='campus'?(direction==='OUT'?(schoolHolidayMode?'Select 1, 2, 3 or 4 if there is no approved gate pass':'Select 1, 2 or 3 if there is no approved gate pass'):'Ready for the next student'):'Scan to record gate duty';
   localStorage.setItem('amfcc_terminal_module',moduleMode);
   localStorage.setItem('amfcc_'+moduleMode+'_direction',direction);
   if(moduleMode!=='campus'||direction!=='OUT')clearDestination();
@@ -84,7 +97,10 @@ async function heartbeat(){
   const {data,error}=await amfccDb.rpc('gate_terminal_heartbeat',{p_device_token:DEVICE_TOKEN});
   const ok=!error&&data?.status==='success';
   setConnection(true,ok);
-  if(ok)$('lastSync').textContent='Last sync '+new Date().toLocaleTimeString('en-ZW',{hour12:false});
+  if(ok){
+    setHolidayMode(Boolean(data.school_holiday_mode));
+    $('lastSync').textContent='Last sync '+new Date().toLocaleTimeString('en-ZW',{hour12:false});
+  }
 }
 async function record(raw,source='scanner'){
   if(isRecording)return;
@@ -124,11 +140,11 @@ $('scannerInput').addEventListener('input',event=>{
     const digits=String(event.target.value??'').replace(/\D/g,'');
     const reg=normalizeReg(event.target.value);
 
-    // In CHECK OUT mode, a single 1, 2 or 3 entered by a guard selects
-    // the destination. Waiting briefly prevents the first digit of a
-    // five-digit QR scan (all AMFCC numbers begin with 2) being mistaken
-    // for destination option 2.
-    if(moduleMode==='campus'&&direction==='OUT'&&/^[123]$/.test(digits)){
+    // In CHECK OUT mode, a single destination key entered by a guard selects
+    // the destination. Option 4 is accepted only while School Holiday Mode is on.
+    // Waiting briefly prevents the first digit of a five-digit QR scan from being
+    // mistaken for a destination shortcut.
+    if(moduleMode==='campus'&&direction==='OUT'&&/^[1234]$/.test(digits)&&destinationAllowed(digits)){
       $('scannerInput').value='';
       selectDestination(digits);
       return;
@@ -143,7 +159,7 @@ $('scannerInput').addEventListener('keydown',event=>{
     event.preventDefault();
     clearTimeout(scanTimer);
     const digits=String(event.target.value??'').replace(/\D/g,'');
-    if(moduleMode==='campus'&&direction==='OUT'&&/^[123]$/.test(digits)){
+    if(moduleMode==='campus'&&direction==='OUT'&&/^[1234]$/.test(digits)&&destinationAllowed(digits)){
       $('scannerInput').value='';
       selectDestination(digits);
       return;
@@ -167,4 +183,4 @@ document.addEventListener('keydown',event=>{
 document.addEventListener('click',focusScanner);
 window.addEventListener('online',heartbeat);
 window.addEventListener('offline',()=>setConnection(false,false));
-renderMode(false);updateClock();setInterval(updateClock,1000);heartbeat();setInterval(heartbeat,60000);focusScanner();registerSW();
+renderMode(false);updateClock();setInterval(updateClock,1000);heartbeat();setInterval(heartbeat,15000);focusScanner();registerSW();
