@@ -11,4 +11,13 @@ a{color:var(--navy)}button,input,textarea,select{font:inherit}.container{max-wid
 @media(max-width:900px){.grid.four{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.grid.four{grid-template-columns:1fr}.toolbar select[aria-label="Class year"]{width:100%}}
 
-#login[hidden],#login[aria-hidden="true"]{display:none!important;visibility:hidden!important;pointer-events:none!important}
+/* Global login-overlay fail-safe.
+   Any login modal without the open class must be completely removed. */
+#login:not(.open),
+#login[hidden],
+#login[aria-hidden="true"]{
+  display:none!important;
+  visibility:hidden!important;
+  opacity:0!important;
+  pointer-events:none!important;
+}
