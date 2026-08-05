@@ -1,4 +1,4 @@
-const {$,esc,formatDateTime,formatDate,localDate,downloadCsv}=AMFCC;
+const {$,esc,formatDateTime,formatDate,localDate,downloadCsv,studentYearLabel,studentYearMatches}=AMFCC;
 let pin=sessionStorage.getItem('amfcc_admin_pin')||'';
 let selectedTermId=null;
 let dataCache=null;
@@ -67,6 +67,10 @@ function renderTerms(){
   $('feeTermSummary').textContent=`${term.term_name||''} · Fees due ${formatDate(term.fees_due_date)||'not set'}`;
 }
 
+function academicYear(){return Number(dataCache?.current_academic_year)||AMFCC.currentAcademicYear();}
+function yearBadge(reg){return `<span class="year-badge">${esc(studentYearLabel(reg,academicYear()))}</span>`;}
+function yearMatches(reg,filter){return studentYearMatches(reg,filter,academicYear());}
+
 function healthHtml(s){
   const items=[];
   if(s.bed_rest)items.push('<span class="health-pill bed-rest">🛏️ Bed rest</span>');
@@ -75,7 +79,7 @@ function healthHtml(s){
 }
 
 function studentNameHtml(s){
-  return `${s.bed_rest?'<span class="bed-icon" title="On bed rest">🛏️</span>':''}<b>${esc(s.student_name)}</b>`;
+  return `<span class="student-name-stack"><span>${s.bed_rest?'<span class="bed-icon" title="On bed rest">🛏️</span>':''}<b>${esc(s.student_name)}</b></span>${yearBadge(s.registration_number)}</span>`;
 }
 
 function campusMatches(s,filter){
@@ -88,7 +92,8 @@ function campusMatches(s,filter){
 function renderCampus(){
   const q=$('campusSearch').value.toLowerCase();
   const filter=$('campusFilter').value;
-  const rows=(dataCache.students||[]).filter(s=>campusMatches(s,filter)&&(`${s.student_name} ${s.registration_number}`.toLowerCase().includes(q)));
+  const year=$('campusYearFilter').value;
+  const rows=(dataCache.students||[]).filter(s=>yearMatches(s.registration_number,year)&&campusMatches(s,filter)&&(`${s.student_name} ${s.registration_number}`.toLowerCase().includes(q)));
   $('campusRows').innerHTML=rows.map(s=>`<tr>
     <td>${studentNameHtml(s)}</td><td>${esc(s.registration_number)}</td>
     <td><span class="pill ${esc(s.status)}">${s.status==='IN'?'ON CAMPUS':s.status==='OUT'?'OFF CAMPUS':'UNKNOWN'}</span></td>
@@ -114,7 +119,8 @@ function feesIcon(paid){
 function renderAccommodation(){
   const q=$('accommodationSearch').value.toLowerCase();
   const filter=$('accommodationFilter').value;
-  const rows=(dataCache.students||[]).filter(s=>accommodationMatches(s,filter)&&(`${s.student_name} ${s.registration_number} ${s.residence||''} ${s.room||''}`.toLowerCase().includes(q)));
+  const year=$('accommodationYearFilter').value;
+  const rows=(dataCache.students||[]).filter(s=>yearMatches(s.registration_number,year)&&accommodationMatches(s,filter)&&(`${s.student_name} ${s.registration_number} ${s.residence||''} ${s.room||''}`.toLowerCase().includes(q)));
   $('accommodationRows').innerHTML=rows.map(s=>`<tr>
     <td>${studentNameHtml(s)}</td><td>${esc(s.registration_number)}</td>
     <td>${s.residence?esc(s.residence):'<span class="accommodation-missing">Not allocated</span>'}</td>
@@ -127,16 +133,17 @@ function renderAccommodation(){
 function renderPasses(){
   const q=$('passSearch').value.toLowerCase();
   const filter=$('passFilter').value;
+  const year=$('passYearFilter').value;
   const holiday=Boolean(dataCache.school_holiday_mode);
   $('passRuleNotice').textContent=holiday
     ?'School Holiday Mode: School Administrator approval alone completes a pass. The Wednesday deadline is paused.'
     :'Normal mode: each pass needs School Administrator approval plus one approval from the Principal, Dean or Director.';
   const rows=(dataCache.gate_passes||[]).filter(p=>{
     const statusMatch=filter==='ALL'||(filter==='OVERDUE'?Boolean(p.overdue):p.status===filter);
-    return statusMatch&&(`${p.student_name} ${p.registration_number} ${p.destination}`.toLowerCase().includes(q));
+    return yearMatches(p.registration_number,year)&&statusMatch&&(`${p.student_name} ${p.registration_number} ${p.destination}`.toLowerCase().includes(q));
   });
   $('passRows').innerHTML=rows.map(p=>`<tr class="${p.overdue?'overdue':''}">
-    <td><button class="student-link" data-review="${esc(p.id)}">${esc(p.student_name)}</button><br><small>${esc(p.registration_number)}</small></td>
+    <td><span class="student-name-stack"><button class="student-link" data-review="${esc(p.id)}">${esc(p.student_name)}</button>${yearBadge(p.registration_number)}<small>${esc(p.registration_number)}</small></span></td>
     <td>${esc(p.destination)}</td>
     <td><div class="status-review"><span class="pill ${p.overdue?'overdue':esc(p.status)}">${p.overdue?'OVERDUE':esc(p.status.toUpperCase())}</span><button class="btn secondary compact-btn" data-review="${esc(p.id)}">Review</button></div>${p.waiting_on?`<small class="muted">Waiting on ${esc(p.waiting_on)}</small>`:''}</td>
     <td>${esc(formatDateTime(p.departure_at))}<br><small>Return ${esc(formatDateTime(p.expected_return_at))}</small></td>
@@ -152,8 +159,9 @@ function feeMatches(s,filter){
 function renderFees(){
   const q=$('feeSearch').value.toLowerCase();
   const filter=$('feeFilter').value;
+  const year=$('feeYearFilter').value;
   const term=dataCache.selected_term||{};
-  const rows=(dataCache.students||[]).filter(s=>feeMatches(s,filter)&&(`${s.student_name} ${s.registration_number}`.toLowerCase().includes(q)));
+  const rows=(dataCache.students||[]).filter(s=>yearMatches(s.registration_number,year)&&feeMatches(s,filter)&&(`${s.student_name} ${s.registration_number}`.toLowerCase().includes(q)));
   $('feeRows').innerHTML=rows.map(s=>`<tr>
     <td>${studentNameHtml(s)}</td><td>${esc(s.registration_number)}</td><td>${esc(term.term_name||'')}</td>
     <td>${esc(formatDate(term.fees_due_date)||'—')}</td>
@@ -163,11 +171,15 @@ function renderFees(){
 }
 
 function renderDuty(){
-  $('dutyRows').innerHTML=(dataCache.gate_duty_today||[]).map(r=>`<tr><td>${esc(formatDateTime(r.scanned_at))}</td><td><b>${esc(r.student_name)}</b></td><td>${esc(r.registration_number)}</td><td><span class="pill ${esc(r.direction)}">${esc(r.direction)}</span></td><td>${esc(r.source)}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No gate duty records today.</td></tr>';
+  const q=$('dutySearch').value.toLowerCase(),year=$('dutyYearFilter').value;
+  const rows=(dataCache.gate_duty_today||[]).filter(r=>yearMatches(r.registration_number,year)&&(`${r.student_name} ${r.registration_number}`.toLowerCase().includes(q)));
+  $('dutyRows').innerHTML=rows.map(r=>`<tr><td>${esc(formatDateTime(r.scanned_at))}</td><td><span class="student-name-stack"><b>${esc(r.student_name)}</b>${yearBadge(r.registration_number)}</span></td><td>${esc(r.registration_number)}</td><td><span class="pill ${esc(r.direction)}">${esc(r.direction)}</span></td><td>${esc(r.source)}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No gate duty records today.</td></tr>';
 }
 
 function renderRecent(){
-  $('recentRows').innerHTML=(dataCache.recent_movements||[]).map(r=>`<tr><td>${esc(formatDateTime(r.scanned_at))}</td><td><b>${esc(r.student_name)}</b></td><td>${esc(r.registration_number)}</td><td><span class="pill ${esc(r.direction)}">${esc(r.direction)}</span></td><td>${r.gate_pass_id?'Approved pass':esc(r.checkout_destination_label||'Not linked')}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No campus movements recorded.</td></tr>';
+  const q=$('recentSearch').value.toLowerCase(),year=$('recentYearFilter').value;
+  const rows=(dataCache.recent_movements||[]).filter(r=>yearMatches(r.registration_number,year)&&(`${r.student_name} ${r.registration_number}`.toLowerCase().includes(q)));
+  $('recentRows').innerHTML=rows.map(r=>`<tr><td>${esc(formatDateTime(r.scanned_at))}</td><td><span class="student-name-stack"><b>${esc(r.student_name)}</b>${yearBadge(r.registration_number)}</span></td><td>${esc(r.registration_number)}</td><td><span class="pill ${esc(r.direction)}">${esc(r.direction)}</span></td><td>${r.gate_pass_id?'Approved pass':esc(r.checkout_destination_label||'Not linked')}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No campus movements recorded.</td></tr>';
 }
 
 function renderSettings(){
@@ -327,7 +339,7 @@ function movementReportRows(rows,periodLabel,generatedAt,periodStart){
   return (rows||[]).map(r=>({
     'Report Period':periodLabel,'Generated At':formatDateTime(generatedAt),
     'Period Start':periodStart?formatDateTime(periodStart):'Current snapshot',
-    'Registration Number':r.registration_number,'Student Name':r.student_name,
+    'Registration Number':r.registration_number,'Student Name':r.student_name,'Class Year':studentYearLabel(r.registration_number,academicYear()),
     'Current Campus Status':r.current_campus_status,'On Campus':r.on_campus,
     'On Bed Rest':r.on_bed_rest,'Bed Rest Started':r.bed_rest_started_at?formatDateTime(r.bed_rest_started_at):'',
     'Maternity':r.maternity,'On Gate Pass':r.on_gate_pass,'Gate Pass Status':r.gate_pass_status,
@@ -343,20 +355,23 @@ function movementReportRows(rows,periodLabel,generatedAt,periodStart){
 
 async function exportMovements(){
   const period=$('movementPeriod').value;
+  const year=$('movementYearFilter').value;
   $('exportMovements').disabled=true;
   const {data,error}=await amfccDb.rpc('student_movements_export',{p_pin:pin,p_period:period});
   $('exportMovements').disabled=false;
   if(error||data?.status!=='success')return toast('bad','Export failed',error?.message||data?.message||'Try again.');
-  const summary=data.summary||{};
+  const filteredRows=(data.rows||[]).filter(r=>yearMatches(r.registration_number,year));
+  const summary={active_students:filteredRows.length,on_campus:filteredRows.filter(r=>r.on_campus==='Yes').length,on_bed_rest:filteredRows.filter(r=>r.on_bed_rest==='Yes').length,on_gate_pass:filteredRows.filter(r=>r.on_gate_pass==='Yes').length};
   $('movementExportSummary').innerHTML=`<span><b>${esc(summary.active_students||0)}</b> active</span><span><b>${esc(summary.on_campus||0)}</b> on campus</span><span><b>${esc(summary.on_bed_rest||0)}</b> bed rest</span><span><b>${esc(summary.on_gate_pass||0)}</b> gate pass</span>`;
-  try{downloadCsv(movementReportRows(data.rows,data.period_label,data.generated_at,data.period_start),`student-movements-${period}-${localDate()}.csv`);}catch(e){toast('warn','No records',e.message);}
+  try{downloadCsv(movementReportRows(filteredRows,data.period_label,data.generated_at,data.period_start),`student-movements-${period}-${year==='ALL'?'all-years':`year-${year}`}-${localDate()}.csv`);}catch(e){toast('warn','No records',e.message);}
 }
 
 async function exportReport(){
-  const type=$('reportType').value,start=$('startDate').value||null,end=$('endDate').value||null;
+  const type=$('reportType').value,start=$('startDate').value||null,end=$('endDate').value||null,year=$('detailYearFilter').value;
   const {data,error}=await amfccDb.rpc('student_services_export',{p_pin:pin,p_report:type,p_start_date:start,p_end_date:end});
   if(error||data?.status!=='success')return toast('bad','Export failed',error?.message||data?.message||'Try again.');
-  try{downloadCsv(data.rows||[],`${type}-${start||'start'}-${end||localDate()}.csv`);}catch(e){toast('warn','No records',e.message);}
+  const rows=(data.rows||[]).filter(r=>yearMatches(r.registration_number,year)).map(r=>({'Class Year':studentYearLabel(r.registration_number,academicYear()),...r}));
+  try{downloadCsv(rows,`${type}-${year==='ALL'?'all-years':`year-${year}`}-${start||'start'}-${end||localDate()}.csv`);}catch(e){toast('warn','No records',e.message);}
 }
 
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>activateTab(b.dataset.tab));
@@ -374,12 +389,29 @@ $('removeAccommodation').onchange=toggleAccommodationFields;
 $('loginBtn').onclick=login;
 $('pin').onkeydown=e=>{if(e.key==='Enter')login();};
 $('termSelect').onchange=async()=>{selectedTermId=$('termSelect').value;await load();};
-$('campusSearch').oninput=renderCampus;$('campusFilter').onchange=renderCampus;
-$('accommodationSearch').oninput=renderAccommodation;$('accommodationFilter').onchange=renderAccommodation;
-$('passSearch').oninput=renderPasses;$('passFilter').onchange=renderPasses;
-$('feeSearch').oninput=renderFees;$('feeFilter').onchange=renderFees;
+$('campusSearch').oninput=renderCampus;$('campusFilter').onchange=renderCampus;$('campusYearFilter').onchange=renderCampus;
+$('accommodationSearch').oninput=renderAccommodation;$('accommodationFilter').onchange=renderAccommodation;$('accommodationYearFilter').onchange=renderAccommodation;
+$('passSearch').oninput=renderPasses;$('passFilter').onchange=renderPasses;$('passYearFilter').onchange=renderPasses;
+$('feeSearch').oninput=renderFees;$('feeFilter').onchange=renderFees;$('feeYearFilter').onchange=renderFees;
+$('dutySearch').oninput=renderDuty;$('dutyYearFilter').onchange=renderDuty;
+$('recentSearch').oninput=renderRecent;$('recentYearFilter').onchange=renderRecent;
 $('refresh').onclick=load;
-$('holidayMode').onchange=updateHolidayRuleSummary;
+$('holidayMode').onchange=async()=>{
+  updateHolidayRuleSummary();
+  const requestedValue=$('holidayMode').checked;
+  $('holidayMode').disabled=true;
+  try{
+    await updateSetting('school_holiday_mode',requestedValue);
+    toast('good','Holiday Mode updated',requestedValue?'Holiday Mode is now ON. Gate option 4 will appear within 15 seconds.':'Holiday Mode is now OFF. Normal gate-pass rules have returned.');
+    await load();
+  }catch(error){
+    $('holidayMode').checked=!requestedValue;
+    updateHolidayRuleSummary();
+    toast('bad','Holiday Mode not saved',error.message||'Try again.');
+  }finally{
+    $('holidayMode').disabled=false;
+  }
+};
 $('saveSettings').onclick=saveSettings;
 $('exportMovements').onclick=exportMovements;$('exportReport').onclick=exportReport;
 $('toast').onclick=()=>$('toast').classList.remove('open');

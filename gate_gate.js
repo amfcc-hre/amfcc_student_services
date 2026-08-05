@@ -11,6 +11,8 @@ let direction=localStorage.getItem('amfcc_'+moduleMode+'_direction')||'IN';
 let selectedCheckoutOption=null;
 let schoolHolidayMode=false;
 let scanTimer=null,resultTimer=null,isRecording=false;
+let keyboardBuffer='',keyboardTimer=null;
+const KEYBOARD_SETTLE_MS=280;
 
 function manualIsOpen(){return $('manual').classList.contains('open');}
 function focusScanner(){
@@ -30,10 +32,38 @@ function updateClock(){
 }
 function clearDestination(){selectedCheckoutOption=null;renderDestination();}
 function destinationAllowed(code){return Boolean(DESTINATIONS[code])&&(code!=='4'||schoolHolidayMode);}
+function clearKeyboardBuffer(){
+  clearTimeout(keyboardTimer);
+  keyboardTimer=null;
+  keyboardBuffer='';
+  $('scannerInput').value='';
+}
+function processKeyboardBuffer(){
+  const raw=keyboardBuffer.trim();
+  clearKeyboardBuffer();
+  if(!raw)return;
+  const reg=normalizeReg(raw);
+  if(/^\d{5}$/.test(reg)){record(raw);return;}
+  if(moduleMode==='campus'&&direction==='OUT'&&/^[1234]$/.test(raw)){
+    if(destinationAllowed(raw)){selectDestination(raw);return;}
+    if(raw==='4'){
+      showResult('warn','HOLIDAY MODE IS OFF',{message:'Ask School Administration to switch on School Holiday Mode.'});
+      return;
+    }
+  }
+  showResult('bad','CARD NOT RECOGNISED',{message:'Scan the student card again or use manual entry.'});
+}
+function queueKeyboardCharacter(character){
+  keyboardBuffer+=character;
+  clearTimeout(keyboardTimer);
+  keyboardTimer=setTimeout(processKeyboardBuffer,KEYBOARD_SETTLE_MS);
+}
 function setHolidayMode(enabled){
   schoolHolidayMode=Boolean(enabled);
   const holidayButton=$('holidayDestination');
   holidayButton.hidden=!schoolHolidayMode;
+  holidayButton.disabled=!schoolHolidayMode;
+  holidayButton.setAttribute('aria-hidden',schoolHolidayMode?'false':'true');
   $('checkoutOptions').classList.toggle('holiday-mode',schoolHolidayMode);
   if(!schoolHolidayMode&&selectedCheckoutOption==='4')selectedCheckoutOption=null;
   renderMode(false);
@@ -105,11 +135,12 @@ async function heartbeat(){
   setConnection(true,ok);
   if(ok){
     setHolidayMode(Boolean(data.school_holiday_mode));
-    $('lastSync').textContent='Last sync '+new Date().toLocaleTimeString('en-ZW',{hour12:false});
+    $('lastSync').textContent='v8.2 · Last sync '+new Date().toLocaleTimeString('en-ZW',{hour12:false});
   }
 }
 async function record(raw,source='scanner'){
   if(isRecording)return;
+  clearKeyboardBuffer();
   const reg=normalizeReg(raw);
   $('scannerInput').value='';
   if(!navigator.onLine)return showResult('bad','NO CONNECTION',{message:'The record was not saved.'});
@@ -159,61 +190,99 @@ function manualRecord(){
   record(reg,'manual');
 }
 
-$('scannerInput').addEventListener('input',event=>{
-  clearTimeout(scanTimer);
-  scanTimer=setTimeout(()=>{
-    const digits=String(event.target.value??'').replace(/\D/g,'');
-    const reg=normalizeReg(event.target.value);
-
-    // In CHECK OUT mode, a single destination key entered by a guard selects
-    // the destination. Option 4 is accepted only while School Holiday Mode is on.
-    // Waiting briefly prevents the first digit of a five-digit QR scan from being
-    // mistaken for a destination shortcut.
-    if(moduleMode==='campus'&&direction==='OUT'&&/^[1234]$/.test(digits)&&destinationAllowed(digits)){
-      $('scannerInput').value='';
-      selectDestination(digits);
-      return;
-    }
-
-    if(/^\d{5}$/.test(reg))record(reg);
-  },300);
-});
-$('scannerInput').addEventListener('keydown',event=>{
-  AMFCCSounds.unlock();
-  if(event.key==='Enter'){
+document.querySelectorAll('[data-destination]').forEach(button=>{
+  button.onclick=event=>{
     event.preventDefault();
-    clearTimeout(scanTimer);
-    const digits=String(event.target.value??'').replace(/\D/g,'');
-    if(moduleMode==='campus'&&direction==='OUT'&&/^[1234]$/.test(digits)&&destinationAllowed(digits)){
-      $('scannerInput').value='';
-      selectDestination(digits);
-      return;
+    event.stopPropagation();
+    clearKeyboardBuffer();
+    selectDestination(button.dataset.destination);
+  };
+});
+
+document.addEventListener('keydown',event=>{
+  AMFCCSounds.unlock();
+
+  if(event.ctrlKey&&event.shiftKey&&event.key.toLowerCase()==='a'){
+    event.preventDefault();
+    event.stopPropagation();
+    clearKeyboardBuffer();
+    openManual();
+    return;
+  }
+
+  if(manualIsOpen()){
+    if(event.key==='Escape'){
+      event.preventDefault();
+      event.stopPropagation();
+      closeManual();
     }
-    record(event.target.value);
+    return;
+  }
+
+  if(event.key==='F1'){
+    event.preventDefault();
+    event.stopPropagation();
+    clearKeyboardBuffer();
+    toggleModule();
+    return;
+  }
+
+  if(event.code==='Space'){
+    event.preventDefault();
+    event.stopPropagation();
+    clearKeyboardBuffer();
+    toggleDirection();
+    return;
+  }
+
+  if(event.key==='Escape'){
+    event.preventDefault();
+    event.stopPropagation();
+    clearKeyboardBuffer();
+    clearDestination();
+    hideResult();
+    return;
+  }
+
+  if(event.key==='Enter'){
+    if(keyboardBuffer){
+      event.preventDefault();
+      event.stopPropagation();
+      processKeyboardBuffer();
+    }
+    return;
+  }
+
+  // The gate scanner behaves like a fast keyboard. We collect letters and
+  // numbers briefly before deciding what they mean:
+  // - one key, 1 to 4, is a destination shortcut;
+  // - a five-digit or R25001HRE-style burst is a student card scan.
+  if(event.key.length===1&&/^[A-Za-z0-9]$/.test(event.key)){
+    event.preventDefault();
+    event.stopPropagation();
+    queueKeyboardCharacter(event.key);
   }
 });
+
 $('result').onclick=hideResult;
 $('manualRecord').onclick=manualRecord;
 $('manualClose').onclick=closeManual;
-$('manualReg').onkeydown=e=>{
-  if(e.key==='Enter'){e.preventDefault();manualRecord();}
-  else if(e.key==='Escape'){e.preventDefault();closeManual();}
+$('manualReg').onkeydown=event=>{
+  if(event.key==='Enter'){
+    event.preventDefault();
+    event.stopPropagation();
+    manualRecord();
+  }else if(event.key==='Escape'){
+    event.preventDefault();
+    event.stopPropagation();
+    closeManual();
+  }
 };
 $('manualReg').addEventListener('focus',()=>{
   if(!manualIsOpen())focusScanner();
 });
 document.addEventListener('focusin',event=>{
   if(event.target===$('manualReg')&&!manualIsOpen())focusScanner();
-});
-document.querySelectorAll('[data-destination]').forEach(button=>button.onclick=()=>selectDestination(button.dataset.destination));
-document.addEventListener('keydown',event=>{
-  AMFCCSounds.unlock();
-  if(event.ctrlKey&&event.shiftKey&&event.key.toLowerCase()==='a'){event.preventDefault();openManual();return;}
-  if(manualIsOpen()){if(event.key==='Escape'){event.preventDefault();closeManual();}return;}
-  if(document.activeElement===$('manualReg')){event.preventDefault();focusScanner();return;}
-  if(event.key==='F1'){event.preventDefault();toggleModule();return;}
-  if(event.code==='Space'){event.preventDefault();toggleDirection();return;}
-  if(event.key==='Escape'){$('scannerInput').value='';clearDestination();hideResult();}
 });
 document.addEventListener('click',focusScanner);
 window.addEventListener('online',heartbeat);
