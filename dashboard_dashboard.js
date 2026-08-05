@@ -2,6 +2,21 @@ const {$,esc,formatDateTime,localDate,downloadCsv,studentYearLabel,studentYearMa
 let pin=sessionStorage.getItem('amfcc_dashboard_pin')||'';
 let dataCache=null,timer=null,reviewPassId=null,editOriginal=null;
 
+
+function closeLoginOverlay(){
+  const modal=$('login');
+  const input=$('pin');
+  if(input){input.value='';input.blur();input.disabled=true;}
+  if(modal){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+    modal.hidden=true;
+    modal.style.setProperty('display','none','important');
+    modal.style.pointerEvents='none';
+  }
+  document.body.style.overflow='';
+}
+
 function toast(kind,title,text){
   $('toastBox').className='result-box '+kind;
   $('toastBox').innerHTML=`<div class="icon">${kind==='good'?'✓':kind==='warn'?'⚠':'✕'}</div><h2>${esc(title)}</h2><p>${esc(text)}</p>`;
@@ -297,7 +312,7 @@ async function login(){
   const ok=await load();
   if(ok){
     sessionStorage.setItem('amfcc_dashboard_pin',pin);
-    $('login').classList.remove('open');
+    closeLoginOverlay();
     clearInterval(timer);
     timer=setInterval(load,10000);
   }

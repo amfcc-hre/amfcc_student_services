@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#8a5300">
-  <title>AMFCC Clinic</title><link rel="apple-touch-icon" href="assets_icon.png"><link rel="stylesheet" href="shared_ui.css"><link rel="stylesheet" href="clinic_clinic.css">
+  <title>AMFCC Clinic</title><link rel="apple-touch-icon" href="assets_icon.png"><link rel="stylesheet" href="shared_ui.css?v=8.3"><link rel="stylesheet" href="clinic_clinic.css">
 </head>
 <body>
 <main class="container">
@@ -10,12 +10,12 @@
   <div class="grid two clinic-layout">
     <section class="card">
       <h2>Find a student</h2>
-      <div class="field"><label>Search by name or registration number</label><input id="search" autocomplete="off" placeholder="Start typing a student name"></div>
+      <div class="field"><label>Search by name or registration number</label><input id="search" autocomplete="off" placeholder="Start typing a student name"></div><div class="field"><label>Class year</label><select id="clinicYearFilter" aria-label="Class year"><option value="ALL">All years</option><option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option></select></div>
       <div id="searchStatus" class="muted search-status">Enter a name or registration number.</div>
       <div id="searchResults" class="student-results"></div>
     </section>
     <section class="card">
-      <div class="section-heading"><div><h2>Currently on bed rest</h2><p id="activeCount" class="muted">0 students</p></div><button id="refresh" class="btn secondary">Refresh</button></div>
+      <div class="section-heading"><div><h2>Currently on bed rest</h2><p id="activeCount" class="muted">0 students</p></div><button id="refresh" class="btn secondary">Refresh</button></div><div class="field"><label>Class year</label><select id="activeYearFilter" aria-label="Class year"><option value="ALL">All years</option><option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option></select></div>
       <div id="activeBedRest" class="active-list"></div>
     </section>
   </div>
@@ -23,6 +23,6 @@
 <div id="login" class="modal open"><div class="modalbox"><div style="text-align:center"><img src="assets_icon.png" width="72" style="border-radius:16px"><h2>Clinic Access</h2><p>Enter the clinic password.</p></div><div class="field"><input id="pin" class="pin-input" type="password" inputmode="numeric" maxlength="4"></div><p id="pinError" class="notice bad" style="display:none"></p><button id="loginBtn" class="btn primary" style="width:100%;margin-top:12px">Open clinic</button></div></div>
 <div id="bedRestModal" class="modal"><div class="modalbox"><h2 id="bedRestTitle">Place student on bed rest</h2><div id="bedRestStudent" class="selected-student"></div><div class="field"><label>Clinic notes (optional)</label><textarea id="bedRestNotes" placeholder="Reason, instructions or review information"></textarea></div><div class="action-grid"><button id="confirmBedRest" class="btn good">Confirm</button><button id="cancelBedRest" class="btn secondary">Cancel</button></div></div></div>
 <div id="toast" class="result-overlay"><div id="toastBox" class="result-box"></div></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="shared_config.js"></script><script src="shared_supabase.js"></script><script src="shared_utils.js"></script><script src="clinic_clinic.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="shared_config.js"></script><script src="shared_supabase.js"></script><script src="shared_utils.js"></script><script src="clinic_clinic.js?v=8.3"></script>
 </body>
 </html>

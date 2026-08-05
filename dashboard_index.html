@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#173a63">
   <title>AMFCC Administrative Dashboard</title>
   <link rel="apple-touch-icon" href="assets_icon.png">
-  <link rel="stylesheet" href="shared_ui.css">
+  <link rel="stylesheet" href="shared_ui.css?v=8.3">
   <link rel="stylesheet" href="dashboard_dashboard.css">
 </head>
 <body>
@@ -47,25 +47,26 @@
         <option value="BED_REST">On bed rest</option>
         <option value="MATERNITY">Maternity</option>
       </select>
+      <select id="campusYearFilter" aria-label="Class year"><option value="ALL">All years</option><option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option></select>
       <button id="refresh" class="btn primary">Refresh</button>
     </div>
     <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Registration</th><th>Status</th><th>Health</th><th>Last movement</th><th>Action</th></tr></thead><tbody id="campusRows"></tbody></table></div>
   </section>
 
   <section id="accommodation" class="section card">
-    <div class="toolbar"><input id="accommodationSearch" placeholder="Search student, hostel or room"><select id="accommodationFilter"><option value="ALL">All students</option><option value="ALLOCATED">Allocated</option><option value="NOT_ALLOCATED">Not allocated</option><option value="BED_REST">On bed rest</option><option value="MATERNITY">Maternity</option></select></div>
+    <div class="toolbar"><input id="accommodationSearch" placeholder="Search student, hostel or room"><select id="accommodationFilter"><option value="ALL">All students</option><option value="ALLOCATED">Allocated</option><option value="NOT_ALLOCATED">Not allocated</option><option value="BED_REST">On bed rest</option><option value="MATERNITY">Maternity</option></select><select id="accommodationYearFilter" aria-label="Class year"><option value="ALL">All years</option><option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option></select></div>
     <div class="notice info">Student Leadership sees basic accommodation only. Registration, fees, waivers and management notes are not included in this view.</div>
     <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Registration</th><th>Residence</th><th>Room</th><th>Bed</th><th>Status</th><th>Action</th></tr></thead><tbody id="accommodationRows"></tbody></table></div>
   </section>
 
   <section id="passes" class="section card">
-    <div class="toolbar"><input id="passSearch" placeholder="Search student, destination or registration"><select id="passFilter"><option value="ALL">All pass statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="departed">Departed</option><option value="returned">Returned</option><option value="rejected">Rejected</option><option value="cancelled">Cancelled</option><option value="OVERDUE">Overdue</option></select></div>
+    <div class="toolbar"><input id="passSearch" placeholder="Search student, destination or registration"><select id="passFilter"><option value="ALL">All pass statuses</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="departed">Departed</option><option value="returned">Returned</option><option value="rejected">Rejected</option><option value="cancelled">Cancelled</option><option value="OVERDUE">Overdue</option></select><select id="passYearFilter" aria-label="Class year"><option value="ALL">All years</option><option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option></select></div>
     <div id="leadershipPassNotice" class="notice info" style="display:none">Student Leadership can view pass information but cannot approve, reject or cancel passes.</div>
     <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Destination</th><th>Status and review</th><th>Departure</th></tr></thead><tbody id="passRows"></tbody></table></div>
   </section>
 
-  <section id="duty" class="section card"><h2>Gate duty today</h2><div class="table-wrap"><table class="data-table"><thead><tr><th>Time</th><th>Student</th><th>Registration</th><th>Direction</th><th>Source</th></tr></thead><tbody id="dutyRows"></tbody></table></div></section>
-  <section id="recent" class="section card"><h2>Recent campus movements</h2><div class="table-wrap"><table class="data-table"><thead><tr><th>Time</th><th>Student</th><th>Registration</th><th>Movement</th><th>Destination/pass</th></tr></thead><tbody id="recentRows"></tbody></table></div></section>
+  <section id="duty" class="section card"><h2>Gate duty today</h2><div class="toolbar"><input id="dutySearch" placeholder="Search student or registration"><select id="dutyYearFilter" aria-label="Class year"><option value="ALL">All years</option><option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option></select></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Time</th><th>Student</th><th>Registration</th><th>Direction</th><th>Source</th></tr></thead><tbody id="dutyRows"></tbody></table></div></section>
+  <section id="recent" class="section card"><h2>Recent campus movements</h2><div class="toolbar"><input id="recentSearch" placeholder="Search student or registration"><select id="recentYearFilter" aria-label="Class year"><option value="ALL">All years</option><option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option></select></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Time</th><th>Student</th><th>Registration</th><th>Movement</th><th>Destination/pass</th></tr></thead><tbody id="recentRows"></tbody></table></div></section>
   <section id="reports" class="section card">
     <h2>Export reports</h2>
 
@@ -74,7 +75,7 @@
         <h3>Student movement status report</h3>
         <p class="muted">Exports one row per active student. Every report shows current campus status, bed-rest status, maternity status, gate-pass status, accommodation and movement activity for the selected period.</p>
       </div>
-      <div class="grid two report-controls">
+      <div class="grid three report-controls">
         <div class="field">
           <label>Movement report period</label>
           <select id="movementPeriod">
@@ -83,6 +84,10 @@
             <option value="last_3_days">Last 3 days</option>
             <option value="past_week">Past week</option>
           </select>
+        </div>
+        <div class="field">
+          <label>Class year</label>
+          <select id="movementYearFilter" aria-label="Class year"><option value="ALL">All years</option><option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option></select>
         </div>
         <div class="field report-action-field">
           <label>Download</label>
@@ -95,10 +100,11 @@
     <div class="report-panel">
       <h3>Detailed activity exports</h3>
       <p class="muted">Use these exports when you need individual gate movements, gate-pass records, gate-duty activity or meal attendance between chosen dates.</p>
-      <div class="grid three">
+      <div class="grid four">
         <div class="field"><label>Report</label><select id="reportType"><option value="campus">Individual campus movements</option><option value="passes">Gate passes</option><option value="gate_duty">Gate duty</option><option value="meals">Meals</option></select></div>
         <div class="field"><label>Start date</label><input id="startDate" type="date"></div>
         <div class="field"><label>End date</label><input id="endDate" type="date"></div>
+        <div class="field"><label>Class year</label><select id="detailYearFilter" aria-label="Class year"><option value="ALL">All years</option><option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option></select></div>
       </div>
       <button id="exportReport" class="btn secondary" style="margin-top:12px">Download detailed CSV</button>
     </div>
@@ -132,6 +138,6 @@
 </div></div>
 <div id="toast" class="result-overlay"><div id="toastBox" class="result-box"></div></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="shared_config.js"></script><script src="shared_supabase.js"></script><script src="shared_utils.js"></script><script src="dashboard_dashboard.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="shared_config.js"></script><script src="shared_supabase.js"></script><script src="shared_utils.js"></script><script src="dashboard_dashboard.js?v=8.3"></script>
 </body>
 </html>
