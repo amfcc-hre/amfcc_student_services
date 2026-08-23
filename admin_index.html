@@ -89,15 +89,16 @@
 
   <section id="settings" class="section card">
     <h2>Admin settings</h2>
-    <div class="setting-row operating-mode-setting"><div style="flex:1"><h3>School operating mode</h3><p class="muted">This choice updates meal deadlines and Department Operations across the connected system.</p><select id="operatingMode"><option value="normal">Normal Mode</option><option value="holiday">Holiday Mode</option><option value="conference">Conference Mode</option></select></div></div>
+    <div class="setting-row operating-mode-setting"><div style="flex:1"><h3>School calendar mode</h3><p class="muted">Choose School Term or Holiday Mode. This controls the calendar and gate-pass rules.</p><select id="operatingMode"><option value="normal">School Term Mode</option><option value="holiday">Holiday Mode</option></select></div></div>
+    <div class="setting-row conference-setting"><div><h3>Conference Mode overlay</h3><p class="muted">Works alongside the selected calendar mode. It removes meal deadlines and manual-work sessions and makes every task an emergency task.</p></div><label class="switch"><input id="conferenceMode" type="checkbox"><span></span></label></div>
     <input id="holidayMode" type="checkbox" hidden aria-hidden="true">
     <div id="holidayRuleSummary" class="notice info"></div>
     <div class="setting-row"><div style="flex:1"><h3>Your name for audit records</h3><input id="adminSettingsActor" placeholder="Enter your name" autocomplete="name"></div></div>
     <div class="setting-row"><div><h3>Paper pass pilot mode</h3><p class="muted">Run electronic gate passes alongside paper passes.</p></div><label class="switch"><input id="pilotMode" type="checkbox"><span></span></label></div>
     <div class="setting-row"><div style="flex:1"><h3>Pilot end date and time</h3><input id="pilotEnd" type="datetime-local"></div></div>
-    <div class="setting-row"><div><h3>Normal gate-pass deadline</h3><p class="muted">Used in Normal and Conference modes.</p></div><b>Wednesday 16:00</b></div>
+    <div class="setting-row"><div><h3>School Term gate-pass deadline</h3><p class="muted">Conference Mode does not replace the selected School Term or Holiday gate-pass rules.</p></div><b>Wednesday 16:00</b></div>
     <div class="setting-row"><div style="flex:1"><h3>Kiosk result duration</h3><p class="muted">Seconds the gate scan result remains visible.</p><input id="resultSeconds" type="number" min="1" max="10" step="0.1"></div></div>
-    <button id="saveSettings" class="btn primary" style="width:100%;margin-top:15px">Save mode and settings</button>
+    <button id="saveSettings" class="btn primary" style="width:100%;margin-top:15px">Save modes and settings</button>
     <div id="settingsMessage" class="notice good" style="display:none"></div>
   </section>
 </main>
@@ -111,7 +112,6 @@
 <div id="toast" class="modal"><div class="modalbox"><div id="toastBox" class="result-box"></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="shared_config.js"></script><script src="shared_supabase.js"></script><script src="shared_utils.js"></script><script src="admin_admin.js?v=8.3"></script><script src="admin_mode_patch.js?v=1.0"></script>
+<script src="shared_config.js"></script><script src="shared_supabase.js"></script><script src="shared_utils.js"></script><script src="admin_admin.js?v=8.3"></script><script src="admin_mode_patch.js?v=1.1"></script>
 </body>
 </html>
-
