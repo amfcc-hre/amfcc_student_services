@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#2f6fed">
+  <title>AMFCC Student Meal Check-In</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets_icon.png">
+  <link rel="stylesheet" href="shared_ui.css">
+  <link rel="stylesheet" href="meal_meal.css">
+</head>
+<body>
+<main class="container narrow">
+  <section class="screen active">
+    <div class="topbar">
+      <a class="back" href="index.html">← Student Services</a>
+      <h1>Student Meal Check-In</h1>
+      <span id="studentStatus" class="status-badge online">● Online</span>
+    </div>
+    <div class="card">
+      <p class="eyebrow">Choose your meal</p>
+      <div id="studentMeals" class="meals"></div>
+      <div class="field">
+        <label for="studentReg">Your registration number</label>
+        <div class="input-row">
+          <input id="studentReg" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="Type or scan">
+          <button class="btn secondary" id="studentScan" type="button">Scan</button>
+        </div>
+      </div>
+      <button id="studentCheck" class="btn blue" type="button" style="width:100%;margin-top:12px">Check in</button>
+    </div>
+    <p class="muted" style="text-align:center">Scan the QR code with the iPad camera, use a connected 2D card scanner, or enter the five-digit registration number.</p>
+  </section>
+</main>
+<div id="result" class="result-overlay"><div id="resultBox" class="result-box"></div></div>
+<div id="camera" class="camera-overlay"><div class="camera-bar">Point the camera at the student ID QR code</div><video id="video" playsinline muted></video><div class="camera-bar"><button id="cameraCancel" class="btn secondary" type="button">Cancel</button></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script src="shared_config.js"></script>
+<script src="shared_supabase.js"></script>
+<script src="shared_utils.js"></script>
+<script src="shared_scanner.js"></script>
+<script src="meal_meal.js"></script>
+</body>
+</html>
