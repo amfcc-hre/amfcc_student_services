@@ -10,6 +10,12 @@ let moduleMode=localStorage.getItem('amfcc_terminal_module')||'campus';
 let direction=localStorage.getItem('amfcc_'+moduleMode+'_direction')||'IN';
 let selectedCheckoutOption=null;
 let schoolHolidayMode=false;
+
+function dispatchPassEmail(){
+  if(amfccDb.functions&&typeof amfccDb.functions.invoke==='function'){
+    amfccDb.functions.invoke('pass-email-worker').catch(()=>{});
+  }
+}
 let scanTimer=null,resultTimer=null,isRecording=false;
 let keyboardBuffer='',keyboardTimer=null;
 const KEYBOARD_SETTLE_MS=280;
@@ -155,6 +161,7 @@ async function record(raw,source='scanner'){
   if(data?.status==='success'){
     const title=moduleMode==='duty'?(direction==='IN'?'GATE DUTY STARTED':'GATE DUTY ENDED'):(direction==='IN'?'CHECKED IN':'CHECKED OUT');
     if(moduleMode==='campus'&&direction==='OUT')clearDestination();
+    if(moduleMode==='campus')dispatchPassEmail();
     return showResult('success',title,data);
   }
   if(data?.status==='destination_required'){

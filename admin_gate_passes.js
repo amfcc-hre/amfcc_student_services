@@ -4,6 +4,12 @@ let pin=sessionStorage.getItem('amfcc_admin_pin')||'';
 let dataCache=null;
 let reviewPassId=null;
 
+function dispatchPassEmail(){
+  if(amfccDb.functions&&typeof amfccDb.functions.invoke==='function'){
+    amfccDb.functions.invoke('pass-email-worker').catch(()=>{});
+  }
+}
+
 function toast(kind,title,text){
   $('toastBox').className='result-box '+kind;
   $('toastBox').innerHTML=`<div class="icon">${kind==='good'?'✓':kind==='warn'?'⚠':'✕'}</div><h2>${esc(title)}</h2><p>${esc(text)}</p>`;
@@ -139,6 +145,8 @@ async function saveReview(decision=null){
   if(error||data?.status!=='success'){
     return toast('bad','Not saved',error?.message||data?.message||'Try again.');
   }
+
+  if(decision)dispatchPassEmail();
 
   $('reviewModal').classList.remove('open');
   reviewPassId=null;

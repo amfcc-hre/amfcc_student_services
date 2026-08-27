@@ -36,7 +36,7 @@ function localInput(value){
 
 async function load(){
   if(!pin)return false;
-  const {data,error}=await amfccDb.rpc('admin_services_dashboard',{
+  const {data,error}=await amfccDb.rpc('admin_services_dashboard_v3',{
     p_pin:pin,
     p_term_id:selectedTermId?Number(selectedTermId):null
   });
@@ -104,11 +104,42 @@ function campusMatches(s,filter){
   return s.status===filter;
 }
 
+function studentByRegistration(registrationNumber){
+  return (dataCache?.students||[]).find(student=>String(student.registration_number)===String(registrationNumber));
+}
+
+function studentRecord(person){
+  return studentByRegistration(person?.registration_number)||person||{};
+}
+
+function genderMatches(person,filter){
+  return filter==='ALL'||String(studentRecord(person).gender||'').toUpperCase()===String(filter).toUpperCase();
+}
+
+function campusStatusMatches(person,filter){
+  return filter==='ALL'||String(studentRecord(person).status||'UNKNOWN').toUpperCase()===String(filter).toUpperCase();
+}
+
+function personMatches(person,gender,year,campusStatus){
+  const record=studentRecord(person);
+  return genderMatches(record,gender)&&yearMatches(record.registration_number,year)&&campusStatusMatches(record,campusStatus);
+}
+
+function passPeople(pass){
+  const people=Array.isArray(pass.people)&&pass.people.length?pass.people:[{student_name:pass.student_name,registration_number:pass.registration_number,is_primary:true}];
+  return people.filter(person=>person&&person.student_name);
+}
+
+function passPeopleHtml(pass){
+  return `<span class="student-name-stack">${passPeople(pass).map(person=>`<span><button class="student-link" data-review="${esc(pass.id)}">${esc(person.student_name)}</button>${person.is_primary?' <small>Applicant</small>':''}<br><small>${esc(person.registration_number)} · ${yearBadge(person.registration_number)}</small></span>`).join('')}</span>`;
+}
+
 function renderCampus(){
   const q=$('campusSearch').value.toLowerCase();
   const filter=$('campusFilter').value;
+  const gender=$('campusGenderFilter').value;
   const year=$('campusYearFilter').value;
-  const rows=(dataCache.students||[]).filter(s=>yearMatches(s.registration_number,year)&&campusMatches(s,filter)&&(`${s.student_name} ${s.registration_number}`.toLowerCase().includes(q)));
+  const rows=(dataCache.students||[]).filter(s=>personMatches(s,gender,year,'ALL')&&campusMatches(s,filter)&&(`${s.student_name} ${s.registration_number}`.toLowerCase().includes(q)));
   $('campusRows').innerHTML=rows.map(s=>`<tr>
     <td>${studentNameHtml(s)}</td><td>${esc(s.registration_number)}</td>
     <td><span class="pill ${esc(s.status)}">${s.status==='IN'?'ON CAMPUS':s.status==='OUT'?'OFF CAMPUS':'UNKNOWN'}</span></td>
@@ -134,8 +165,10 @@ function feesIcon(paid){
 function renderAccommodation(){
   const q=$('accommodationSearch').value.toLowerCase();
   const filter=$('accommodationFilter').value;
+  const gender=$('accommodationGenderFilter').value;
   const year=$('accommodationYearFilter').value;
-  const rows=(dataCache.students||[]).filter(s=>yearMatches(s.registration_number,year)&&accommodationMatches(s,filter)&&(`${s.student_name} ${s.registration_number} ${s.residence||''} ${s.room||''}`.toLowerCase().includes(q)));
+  const campus=$('accommodationCampusFilter').value;
+  const rows=(dataCache.students||[]).filter(s=>personMatches(s,gender,year,campus)&&accommodationMatches(s,filter)&&(`${s.student_name} ${s.registration_number} ${s.residence||''} ${s.room||''}`.toLowerCase().includes(q)));
   $('accommodationRows').innerHTML=rows.map(s=>`<tr>
     <td>${studentNameHtml(s)}</td><td>${esc(s.registration_number)}</td>
     <td>${s.residence?esc(s.residence):'<span class="accommodation-missing">Not allocated</span>'}</td>
@@ -148,17 +181,22 @@ function renderAccommodation(){
 function renderPasses(){
   const q=$('passSearch').value.toLowerCase();
   const filter=$('passFilter').value;
+  const gender=$('passGenderFilter').value;
   const year=$('passYearFilter').value;
+  const campus=$('passCampusFilter').value;
   const holiday=Boolean(dataCache.school_holiday_mode);
   $('passRuleNotice').textContent=holiday
     ?'School Holiday Mode: School Administrator approval alone completes a pass. The Wednesday deadline is paused.'
     :'Normal mode: each pass needs School Administrator approval plus one approval from the Principal, Dean or Director.';
   const rows=(dataCache.gate_passes||[]).filter(p=>{
     const statusMatch=filter==='ALL'||(filter==='OVERDUE'?Boolean(p.overdue):p.status===filter);
-    return yearMatches(p.registration_number,year)&&statusMatch&&(`${p.student_name} ${p.registration_number} ${p.destination}`.toLowerCase().includes(q));
+    const people=passPeople(p);
+    const peopleMatch=people.some(person=>personMatches(person,gender,year,campus));
+    const hay=people.map(person=>`${person.student_name} ${person.registration_number}`).join(' ')+` ${p.destination||''}`;
+    return peopleMatch&&statusMatch&&hay.toLowerCase().includes(q);
   });
   $('passRows').innerHTML=rows.map(p=>`<tr class="${p.overdue?'overdue':''}">
-    <td><span class="student-name-stack"><button class="student-link" data-review="${esc(p.id)}">${esc(p.student_name)}</button>${yearBadge(p.registration_number)}<small>${esc(p.registration_number)}</small></span></td>
+    <td>${passPeopleHtml(p)}</td>
     <td>${esc(p.destination)}</td>
     <td><div class="status-review"><span class="pill ${p.overdue?'overdue':esc(p.status)}">${p.overdue?'OVERDUE':esc(p.status.toUpperCase())}</span><button class="btn secondary compact-btn" data-review="${esc(p.id)}">Review</button></div>${p.waiting_on?`<small class="muted">Waiting on ${esc(p.waiting_on)}</small>`:''}</td>
     <td>${esc(formatDateTime(p.departure_at))}<br><small>Return ${esc(formatDateTime(p.expected_return_at))}</small></td>
@@ -174,9 +212,11 @@ function feeMatches(s,filter){
 function renderFees(){
   const q=$('feeSearch').value.toLowerCase();
   const filter=$('feeFilter').value;
+  const gender=$('feeGenderFilter').value;
   const year=$('feeYearFilter').value;
+  const campus=$('feeCampusFilter').value;
   const term=dataCache.selected_term||{};
-  const rows=(dataCache.students||[]).filter(s=>yearMatches(s.registration_number,year)&&feeMatches(s,filter)&&(`${s.student_name} ${s.registration_number}`.toLowerCase().includes(q)));
+  const rows=(dataCache.students||[]).filter(s=>personMatches(s,gender,year,campus)&&feeMatches(s,filter)&&(`${s.student_name} ${s.registration_number}`.toLowerCase().includes(q)));
   $('feeRows').innerHTML=rows.map(s=>`<tr>
     <td>${studentNameHtml(s)}</td><td>${esc(s.registration_number)}</td><td>${esc(term.term_name||'')}</td>
     <td>${esc(formatDate(term.fees_due_date)||'—')}</td>
@@ -186,14 +226,14 @@ function renderFees(){
 }
 
 function renderDuty(){
-  const q=$('dutySearch').value.toLowerCase(),year=$('dutyYearFilter').value;
-  const rows=(dataCache.gate_duty_today||[]).filter(r=>yearMatches(r.registration_number,year)&&(`${r.student_name} ${r.registration_number}`.toLowerCase().includes(q)));
+  const q=$('dutySearch').value.toLowerCase(),gender=$('dutyGenderFilter').value,year=$('dutyYearFilter').value,campus=$('dutyCampusFilter').value;
+  const rows=(dataCache.gate_duty_today||[]).filter(r=>personMatches(r,gender,year,campus)&&(`${r.student_name} ${r.registration_number}`.toLowerCase().includes(q)));
   $('dutyRows').innerHTML=rows.map(r=>`<tr><td>${esc(formatDateTime(r.scanned_at))}</td><td><span class="student-name-stack"><b>${esc(r.student_name)}</b>${yearBadge(r.registration_number)}</span></td><td>${esc(r.registration_number)}</td><td><span class="pill ${esc(r.direction)}">${esc(r.direction)}</span></td><td>${esc(r.source)}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No gate duty records today.</td></tr>';
 }
 
 function renderRecent(){
-  const q=$('recentSearch').value.toLowerCase(),year=$('recentYearFilter').value;
-  const rows=(dataCache.recent_movements||[]).filter(r=>yearMatches(r.registration_number,year)&&(`${r.student_name} ${r.registration_number}`.toLowerCase().includes(q)));
+  const q=$('recentSearch').value.toLowerCase(),gender=$('recentGenderFilter').value,year=$('recentYearFilter').value,campus=$('recentCampusFilter').value;
+  const rows=(dataCache.recent_movements||[]).filter(r=>personMatches(r,gender,year,campus)&&(`${r.student_name} ${r.registration_number}`.toLowerCase().includes(q)));
   $('recentRows').innerHTML=rows.map(r=>`<tr><td>${esc(formatDateTime(r.scanned_at))}</td><td><span class="student-name-stack"><b>${esc(r.student_name)}</b>${yearBadge(r.registration_number)}</span></td><td>${esc(r.registration_number)}</td><td><span class="pill ${esc(r.direction)}">${esc(r.direction)}</span></td><td>${r.gate_pass_id?'Approved pass':esc(r.checkout_destination_label||'Not linked')}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No campus movements recorded.</td></tr>';
 }
 
@@ -404,12 +444,12 @@ $('removeAccommodation').onchange=toggleAccommodationFields;
 $('loginBtn').onclick=login;
 $('pin').onkeydown=e=>{if(e.key==='Enter')login();};
 $('termSelect').onchange=async()=>{selectedTermId=$('termSelect').value;await load();};
-$('campusSearch').oninput=renderCampus;$('campusFilter').onchange=renderCampus;$('campusYearFilter').onchange=renderCampus;
-$('accommodationSearch').oninput=renderAccommodation;$('accommodationFilter').onchange=renderAccommodation;$('accommodationYearFilter').onchange=renderAccommodation;
-$('passSearch').oninput=renderPasses;$('passFilter').onchange=renderPasses;$('passYearFilter').onchange=renderPasses;
-$('feeSearch').oninput=renderFees;$('feeFilter').onchange=renderFees;$('feeYearFilter').onchange=renderFees;
-$('dutySearch').oninput=renderDuty;$('dutyYearFilter').onchange=renderDuty;
-$('recentSearch').oninput=renderRecent;$('recentYearFilter').onchange=renderRecent;
+['campusGenderFilter','campusFilter','campusYearFilter'].forEach(id=>$(id).onchange=renderCampus);$('campusSearch').oninput=renderCampus;
+['accommodationGenderFilter','accommodationYearFilter','accommodationCampusFilter','accommodationFilter'].forEach(id=>$(id).onchange=renderAccommodation);$('accommodationSearch').oninput=renderAccommodation;
+['passGenderFilter','passYearFilter','passCampusFilter','passFilter'].forEach(id=>$(id).onchange=renderPasses);$('passSearch').oninput=renderPasses;
+['feeGenderFilter','feeYearFilter','feeCampusFilter','feeFilter'].forEach(id=>$(id).onchange=renderFees);$('feeSearch').oninput=renderFees;
+['dutyGenderFilter','dutyYearFilter','dutyCampusFilter'].forEach(id=>$(id).onchange=renderDuty);$('dutySearch').oninput=renderDuty;
+['recentGenderFilter','recentYearFilter','recentCampusFilter'].forEach(id=>$(id).onchange=renderRecent);$('recentSearch').oninput=renderRecent;
 $('refresh').onclick=load;
 $('holidayMode').onchange=async()=>{
   updateHolidayRuleSummary();

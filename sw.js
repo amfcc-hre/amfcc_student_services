@@ -1,9 +1,10 @@
-const CACHE='amfcc-student-services-v16-meal-check-in-restored';
+const CACHE='amfcc-student-services-v18-pass-email';
 const CORE=[
   './','./index.html','./manifest.webmanifest','./assets_icon.png',
   './shared_ui.css','./shared_config.js','./shared_supabase.js','./shared_utils.js',
   './shared_scanner.js','./shared_sounds.js',
   './meal_index.html','./meal_meal.css','./meal_meal.js',
+  './library_index.html','./library_student.css','./library_student.js',
   './gate_index.html','./gate_gate.css','./gate_gate.js',
   './passes_index.html','./passes_passes.css','./passes_passes.js'
 ];

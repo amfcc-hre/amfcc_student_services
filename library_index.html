@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173a63">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>AMFCC Student Library</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets_icon.png">
+  <link rel="stylesheet" href="shared_ui.css">
+  <link rel="stylesheet" href="library_student.css?v=17">
+</head>
+<body>
+  <main class="container library-shell">
+    <div class="topbar library-topbar">
+      <a class="back" href="index.html">← Student Services</a>
+      <div>
+        <p class="eyebrow">AMFCC Library</p>
+        <h1>Find books and check your loans</h1>
+      </div>
+      <span id="libraryStatus" class="status-badge online">● Online</span>
+    </div>
+
+    <section class="card intro-card">
+      <div class="intro-icon" aria-hidden="true">📚</div>
+      <div>
+        <h2>Student Library</h2>
+        <p>Search the Library catalogue to see what is available, or enter your registration number to check the books you currently have and when they are due.</p>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="catalogHeading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Library catalogue</p>
+          <h2 id="catalogHeading">Find a book</h2>
+          <p class="muted">Search by title, author, or ISBN.</p>
+        </div>
+      </div>
+      <form id="catalogForm" class="search-form">
+        <div class="field grow">
+          <label for="catalogSearch">Book search</label>
+          <input id="catalogSearch" type="search" autocomplete="off" placeholder="For example: leadership, John Maxwell, or an ISBN">
+        </div>
+        <button class="btn primary" type="submit">Search catalogue</button>
+      </form>
+      <label class="availability-filter">
+        <input id="availableOnly" type="checkbox" checked>
+        Show books available to borrow now
+      </label>
+      <div id="catalogMessage" class="notice info" role="status" hidden></div>
+      <div id="catalogResults" class="book-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="card" aria-labelledby="loansHeading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">My account</p>
+          <h2 id="loansHeading">My borrowed books</h2>
+          <p class="muted">Enter or scan your five-digit registration number.</p>
+        </div>
+      </div>
+      <form id="loanForm" class="search-form loan-search">
+        <div class="field grow">
+          <label for="loanReg">Registration number</label>
+          <input id="loanReg" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="Five digits">
+        </div>
+        <button class="btn blue" type="submit">Check my books</button>
+      </form>
+      <p class="privacy-note">Only your current loans and due dates are shown. The page does not display your name, staff notes, copy barcodes, or previous borrowing history.</p>
+      <div id="loanMessage" class="notice info" role="status" hidden></div>
+      <div id="loanResults" class="loan-grid" aria-live="polite"></div>
+    </section>
+
+    <p class="library-footer">Ask Library staff if a record appears incorrect or if you need to renew a book.</p>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="shared_config.js"></script>
+  <script src="shared_supabase.js"></script>
+  <script src="library_student.js?v=17"></script>
+</body>
+</html>
+

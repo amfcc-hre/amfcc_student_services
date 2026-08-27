@@ -545,6 +545,7 @@ function validateSubmission(){
   const destination=$('destination').value.trim();
   const reason=$('reason').value.trim();
   const contact=$('contact').value.trim();
+  const requesterEmail=$('requesterEmail').value.trim().toLowerCase();
   const departure=$('departure').value;
   const expectedReturn=$('expectedReturn').value;
 
@@ -562,6 +563,10 @@ function validateSubmission(){
 
   if(contact.length<3){
     return 'Enter a phone number or contact person.';
+  }
+
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(requesterEmail)){
+    return 'Enter a valid email address for pass updates.';
   }
 
   if(!departure||!expectedReturn){
@@ -609,6 +614,7 @@ async function submitPass(){
     p_departure_at:toIso($('departure').value),
     p_expected_return_at:toIso($('expectedReturn').value),
     p_contact_details:$('contact').value.trim(),
+    p_requester_email:$('requesterEmail').value.trim().toLowerCase(),
     p_companions:companionPeople.map(
       person=>String(person.registration_number)
     )
@@ -618,7 +624,7 @@ async function submitPass(){
   $('submitPass').textContent='Submitting…';
 
   const {data,error}=await amfccDb.rpc(
-    'student_submit_gate_pass_v3',
+    'student_submit_gate_pass_v4',
     payload
   );
 
@@ -649,6 +655,10 @@ async function submitPass(){
 
   showMessage('good','Request submitted',text);
 
+  if(amfccDb.functions&&typeof amfccDb.functions.invoke==='function'){
+    amfccDb.functions.invoke('pass-email-worker').catch(()=>{});
+  }
+
   $('requestSection').style.display='none';
 
   [
@@ -657,6 +667,7 @@ async function submitPass(){
     'departure',
     'expectedReturn',
     'contact',
+    'requesterEmail',
     'companionReg'
   ].forEach(id=>$(id).value='');
 
