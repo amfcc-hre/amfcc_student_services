@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173a63">
+  <title>AMFCC Student Duties</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets_icon.png">
+  <link rel="stylesheet" href="shared_ui.css?v=9.3">
+  <link rel="stylesheet" href="duties_duties.css?v=1">
+</head>
+<body>
+  <main class="container duties-shell">
+    <div class="topbar">
+      <a class="back" href="index.html">← Student Services</a>
+      <h1>Duties</h1>
+      <span id="online" class="status-badge online">● Online</span>
+    </div>
+
+    <section class="card duty-hero">
+      <div>
+        <p class="eyebrow">Monday to Sunday</p>
+        <h2 id="week-title">This week’s duties</h2>
+        <p id="week-range" class="muted">Loading the current week…</p>
+      </div>
+      <button id="refreshDuties" class="btn secondary" type="button">Refresh</button>
+    </section>
+
+    <section class="leadership-grid" aria-label="Leadership duties">
+      <article class="card duty-card accent-navy">
+        <span>Prefect on Duty</span>
+        <strong id="podName">Not entered</strong>
+      </article>
+      <article class="card duty-card accent-blue">
+        <span>Senior POD</span>
+        <strong id="seniorPodName">Not entered</strong>
+      </article>
+      <article class="card duty-card accent-gold">
+        <span>Bell ringer</span>
+        <strong id="bellRingerName">Not entered</strong>
+      </article>
+    </section>
+
+    <section class="work-duty-grid">
+      <article class="card roster-card">
+        <div class="roster-heading">
+          <div><p class="eyebrow">Weekly roster</p><h2>Kitchen duty</h2></div>
+          <span class="roster-icon" aria-hidden="true">🍽️</span>
+        </div>
+        <p class="department-label">Department: <strong id="kitchenDepartment">Not entered</strong></p>
+        <div id="kitchenPeople" class="people-list"><div class="empty">No students entered.</div></div>
+      </article>
+
+      <article class="card roster-card">
+        <div class="roster-heading">
+          <div><p class="eyebrow">Weekly roster</p><h2>Toilet duty</h2></div>
+          <span class="roster-icon" aria-hidden="true">🧹</span>
+        </div>
+        <p class="department-label">Department: <strong id="toiletDepartment">Not entered</strong></p>
+        <div id="toiletPeople" class="people-list"><div class="empty">No students entered.</div></div>
+      </article>
+    </section>
+
+    <div id="dutyMessage" class="notice info">Duties refresh automatically when the page opens.</div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="shared_config.js"></script>
+  <script src="shared_supabase.js"></script>
+  <script src="shared_utils.js?v=9.3"></script>
+  <script src="duties_duties.js?v=1"></script>
+</body>
+</html>

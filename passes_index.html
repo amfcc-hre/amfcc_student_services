@@ -55,13 +55,14 @@
     </div>
 
     <div class="form-actions" style="margin-top:12px">
-      <button id="loadPasses" class="btn primary">View my passes</button>
+      <button id="loadPasses" class="btn primary">View my pass status</button>
       <button id="showForm" class="btn secondary">Request a new pass</button>
     </div>
 
     <p id="studentName" class="student-confirmation muted">
       Search for yourself, then select the correct name.
     </p>
+    <p class="muted">Student Services shows only each pass status. The confirmation email contains the destination, dates, people and approval details.</p>
   </section>
 
   <section id="requestSection" class="card" style="display:none">
@@ -158,10 +159,10 @@
   </section>
 
   <section>
-    <h2>My passes</h2>
+    <h2>My pass status</h2>
     <div id="passes">
       <div class="empty">
-        Search for yourself above to view your gate passes.
+        Search for yourself above to view gate-pass status only.
       </div>
     </div>
   </section>
@@ -175,6 +176,6 @@
 <script src="shared_config.js"></script>
 <script src="shared_supabase.js"></script>
 <script src="shared_utils.js?v=9.3"></script>
-<script src="passes_passes.js?v=10.0"></script>
+<script src="passes_passes.js?v=11.0"></script>
 </body>
 </html>

@@ -202,15 +202,6 @@ async function ensureApplicantSelected(){
   return false;
 }
 
-function approvalLabel(role){
-  return ({
-    administrator:'School Administrator',
-    principal:'Principal',
-    dean:'Dean',
-    director:'Director'
-  })[role]||role;
-}
-
 function updateRules(data){
   holidayMode=Boolean(data.school_holiday_mode);
 
@@ -368,27 +359,6 @@ async function loadApprovedPasses(){
     :'<div class="empty">There are no active approved passes.</div>';
 }
 
-function peopleHtml(pass){
-  const people=pass.people||[];
-  if(!people.length)return '';
-
-  return `
-    <div class="pass-people">
-      <strong>People on this pass:</strong>
-      <ul>
-        ${people.map(person=>`
-          <li>
-            ${esc(person.student_name)}
-            ${person.is_primary
-              ?' <span class="muted">(Applicant)</span>'
-              :''}
-          </li>
-        `).join('')}
-      </ul>
-    </div>
-  `;
-}
-
 function renderPasses(data){
   selectApplicant({
     student_name:data.student_name,
@@ -412,93 +382,18 @@ function renderPasses(data){
   const list=data.passes||[];
 
   $('passes').innerHTML=list.length
-    ?list.map(pass=>{
-      const approvals=pass.approvals||[];
-      const requiredRoles=holidayMode
-        ?['administrator']
-        :['administrator','principal','dean','director'];
-
-      const approvalHtml=requiredRoles.map(role=>{
-        const approval=approvals.find(item=>item.role===role);
-
-        return `
-          <div class="approval">
-            <strong>${approvalLabel(role)}</strong>
-            ${
-              approval
-                ?`
-                  <span class="pill ${esc(approval.decision)}">
-                    ${esc(approval.decision.toUpperCase())}
-                  </span>
-                  <br>
-                  <small>
-                    ${esc(formatDateTime(approval.decided_at))}
-                    ${approval.comments
-                      ?' · '+esc(approval.comments)
-                      :''}
-                  </small>
-                `
-                :'<span class="muted">Not signed</span>'
-            }
-          </div>
-        `;
-      }).join('');
-
-      const roleNotice=pass.role_on_pass==='companion'
-        ?`
-          <div class="notice info">
-            You were added to this shared pass by another student.
-          </div>
-        `
-        :'';
-
+    ?list.map((pass,index)=>{
       return `
         <article class="card pass-card ${esc(pass.status)}">
           <div class="pass-head">
             <div>
-              <h3>${esc(pass.destination)}</h3>
-              <p class="muted">
-                Submitted ${esc(formatDateTime(pass.submitted_at))}
-              </p>
+              <h3>Pass request ${index+1}</h3>
+              <p class="muted">Full pass details were sent by email.</p>
             </div>
             <span class="pill ${esc(pass.status)}">
-              ${esc(pass.status.toUpperCase())}
+              ${esc(String(pass.status||'unknown').toUpperCase())}
             </span>
           </div>
-
-          ${roleNotice}
-          ${peopleHtml(pass)}
-
-          <p><strong>Reason:</strong> ${esc(pass.reason)}</p>
-
-          <div class="grid two">
-            <p>
-              <strong>Departure:</strong><br>
-              ${esc(formatDateTime(pass.departure_at))}
-            </p>
-            <p>
-              <strong>Expected return:</strong><br>
-              ${esc(formatDateTime(pass.expected_return_at))}
-            </p>
-          </div>
-
-          ${
-            pass.waiting_on
-              ?`<div class="notice warn">
-                  Waiting on: ${esc(pass.waiting_on)}
-                </div>`
-              :''
-          }
-
-          ${
-            pass.cancellation_reason
-              ?`<div class="notice bad">
-                  ${esc(pass.cancellation_reason)}
-                </div>`
-              :''
-          }
-
-          <div class="approval-grid">${approvalHtml}</div>
         </article>
       `;
     }).join('')
@@ -513,7 +408,7 @@ async function loadPasses(){
 
   if(!selected){
     $('loadPasses').disabled=false;
-    $('loadPasses').textContent='View my passes';
+    $('loadPasses').textContent='View my pass status';
     return;
   }
 
@@ -524,7 +419,7 @@ async function loadPasses(){
   });
 
   $('loadPasses').disabled=false;
-  $('loadPasses').textContent='View my passes';
+  $('loadPasses').textContent='View my pass status';
 
   if(error||data?.status!=='success'){
     $('studentName').className='student-confirmation bad-text';

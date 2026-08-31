@@ -1,0 +1,19 @@
+.duties-shell{max-width:1000px}
+.duty-hero{display:flex;align-items:center;justify-content:space-between;gap:18px;background:linear-gradient(135deg,#fff,#edf4ff)}
+.duty-hero h2,.roster-card h2{margin:3px 0 5px}
+.leadership-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.duty-card{display:grid;gap:10px;min-height:150px;border-top:6px solid var(--navy)}
+.duty-card.accent-blue{border-color:var(--blue)}
+.duty-card.accent-gold{border-color:#d19b12}
+.duty-card span{color:var(--muted);font-size:.76rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase}
+.duty-card strong{font-size:clamp(1.2rem,2.8vw,1.75rem);line-height:1.3}
+.work-duty-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:14px}
+.roster-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.roster-icon{font-size:2.2rem}
+.department-label{margin:8px 0 14px;padding:10px 12px;border-radius:10px;color:#2e4c6c;background:#edf4fb}
+.people-list{display:grid;gap:8px}
+.people-list .empty{padding:22px;border:1px dashed var(--line);border-radius:12px}
+.duty-person{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:12px;background:#fafcfe;font-weight:800}
+.duty-person::before{content:"✓";display:grid;place-items:center;width:27px;height:27px;border-radius:999px;color:#fff;background:var(--green);font-size:.78rem}
+#dutyMessage{margin-top:14px}
+@media(max-width:760px){.leadership-grid,.work-duty-grid{grid-template-columns:1fr}.duty-hero{align-items:flex-start;flex-direction:column}.duty-hero .btn{width:100%}}
