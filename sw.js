@@ -1,4 +1,4 @@
-const CACHE='amfcc-student-services-v19-duties-privacy';
+const CACHE='amfcc-student-services-v20-duty-gate-board';
 const CORE=[
   './','./index.html','./manifest.webmanifest','./assets_icon.png',
   './shared_ui.css','./shared_config.js','./shared_supabase.js','./shared_utils.js',

@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets_icon.png">
   <link rel="stylesheet" href="shared_ui.css?v=9.3">
-  <link rel="stylesheet" href="duties_duties.css?v=1">
+  <link rel="stylesheet" href="duties_duties.css?v=2">
 </head>
 <body>
   <main class="container duties-shell">
@@ -62,6 +62,14 @@
       </article>
     </section>
 
+    <section class="card gate-duty-card">
+      <div class="roster-heading">
+        <div><p class="eyebrow">Every night</p><h2>Gate duty this week</h2><p class="muted">Each date starts with the 10:00 pm slot. The midnight and 2:00 am slots continue into the next morning.</p></div>
+        <span class="roster-icon" aria-hidden="true">🛡️</span>
+      </div>
+      <div id="gateDutyWeek" class="gate-duty-week"><div class="empty">Loading gate duty…</div></div>
+    </section>
+
     <div id="dutyMessage" class="notice info">Duties refresh automatically when the page opens.</div>
   </main>
 
@@ -69,6 +77,6 @@
   <script src="shared_config.js"></script>
   <script src="shared_supabase.js"></script>
   <script src="shared_utils.js?v=9.3"></script>
-  <script src="duties_duties.js?v=1"></script>
+  <script src="duties_duties.js?v=2"></script>
 </body>
 </html>
