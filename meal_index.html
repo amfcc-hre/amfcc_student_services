@@ -3,44 +3,113 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-  <meta name="theme-color" content="#2f6fed">
-  <title>AMFCC Student Meal Check-In</title>
+  <meta name="theme-color" content="#173a63">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>AMFCC Meal Collection</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="apple-touch-icon" href="assets_icon.png">
   <link rel="stylesheet" href="shared_ui.css">
   <link rel="stylesheet" href="meal_meal.css">
 </head>
 <body>
-<main class="container narrow">
-  <section class="screen active">
-    <div class="topbar">
-      <a class="back" href="index.html">← Student Services</a>
-      <h1>Student Meal Check-In</h1>
-      <span id="studentStatus" class="status-badge online">● Online</span>
-    </div>
-    <div class="card">
-      <p class="eyebrow">Choose your meal</p>
-      <div id="studentMeals" class="meals"></div>
-      <div class="field">
-        <label for="studentReg">Your registration number</label>
-        <div class="input-row">
-          <input id="studentReg" inputmode="numeric" maxlength="5" autocomplete="off" placeholder="Type or scan">
-          <button class="btn secondary" id="studentScan" type="button">Scan</button>
+  <main class="container narrow meal-shell">
+    <section class="screen active">
+      <div class="topbar">
+        <a class="back" href="index.html">← Student Services</a>
+        <h1>Meal Collection</h1>
+        <span id="studentStatus" class="status-badge online">● Online</span>
+      </div>
+
+      <div id="conferenceBanner" class="conference-banner" hidden>
+        <div class="conference-icon" aria-hidden="true">⛔</div>
+        <div>
+          <strong>Meal collection is closed</strong>
+          <p>Meal check-in is unavailable while Conference Mode is on.</p>
         </div>
       </div>
-      <button id="studentCheck" class="btn blue" type="button" style="width:100%;margin-top:12px">Check in</button>
-    </div>
-    <p class="muted" style="text-align:center">Scan the QR code with the iPad camera, use a connected 2D card scanner, or enter the five-digit registration number.</p>
-  </section>
-</main>
-<div id="result" class="result-overlay"><div id="resultBox" class="result-box"></div></div>
-<div id="camera" class="camera-overlay"><div class="camera-bar">Point the camera at the student ID QR code</div><video id="video" playsinline muted></video><div class="camera-bar"><button id="cameraCancel" class="btn secondary" type="button">Cancel</button></div></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-<script src="shared_config.js"></script>
-<script src="shared_supabase.js"></script>
-<script src="shared_utils.js"></script>
-<script src="shared_scanner.js"></script>
-<script src="meal_meal.js"></script>
+
+      <form id="collectionForm" class="card collection-card" autocomplete="off">
+        <header class="form-heading">
+          <p class="eyebrow">Collect today’s meal</p>
+          <h2>Tell Kitchen who needs food</h2>
+          <p class="muted">Choose the meal, select your exact student record, then include anyone collecting with you.</p>
+        </header>
+
+        <fieldset id="collectionFields" disabled>
+          <section class="form-step">
+            <div class="step-heading">
+              <span class="step-number">1</span>
+              <div><h3>Choose the meal</h3><p>Select the meal being collected now.</p></div>
+            </div>
+            <div id="studentMeals" class="meals" aria-label="Meal selection"></div>
+          </section>
+
+          <section class="form-step">
+            <div class="step-heading">
+              <span class="step-number">2</span>
+              <div><h3>Select your name</h3><p>Search by name or registration number and click your exact record.</p></div>
+            </div>
+            <div class="field student-search-field">
+              <label for="collectorSearch">Your name or registration number</label>
+              <input id="collectorSearch" type="search" autocomplete="off" placeholder="Start typing a name or ID number" aria-controls="collectorSearchResults" aria-autocomplete="list">
+              <div id="collectorSearchResults" class="student-search-results" role="listbox" hidden></div>
+            </div>
+            <div id="collectorSelected" class="selected-student empty-selection">No student selected yet.</div>
+          </section>
+
+          <section class="form-step options-step">
+            <div class="step-heading">
+              <span class="step-number">3</span>
+              <div><h3>Add other portions</h3><p>Include one other student and any children collecting with you.</p></div>
+            </div>
+
+            <label class="option-toggle" for="collectingForOther">
+              <input id="collectingForOther" type="checkbox">
+              <span>
+                <strong>I am collecting for another person</strong>
+                <small>Search for the person by name or registration number.</small>
+              </span>
+            </label>
+
+            <div id="additionalSection" class="additional-section" hidden>
+              <div class="field student-search-field">
+                <label for="additionalSearch">Other person’s name or registration number</label>
+                <input id="additionalSearch" type="search" autocomplete="off" placeholder="Start typing a name or ID number" aria-controls="additionalSearchResults" aria-autocomplete="list">
+                <div id="additionalSearchResults" class="student-search-results" role="listbox" hidden></div>
+              </div>
+              <div id="additionalSelected" class="selected-student empty-selection">No additional student selected yet.</div>
+            </div>
+
+            <div class="children-field">
+              <div>
+                <label for="childPortions">Children collecting with me</label>
+                <p>Enter only the number of children. Do not enter their names.</p>
+              </div>
+              <input id="childPortions" type="number" min="0" max="10" step="1" value="0" inputmode="numeric" aria-label="Number of child portions">
+            </div>
+          </section>
+
+          <section class="collection-summary" aria-live="polite">
+            <div><span>Student portions</span><strong id="studentPortionCount">1</strong></div>
+            <div><span>Child portions</span><strong id="childPortionCount">0</strong></div>
+            <div class="total"><span>Total portions</span><strong id="totalPortionCount">1</strong></div>
+          </section>
+
+          <button id="collectButton" class="btn blue collect-button" type="submit" disabled>Here to collect</button>
+          <p class="submit-help">After saving, show the full-screen confirmation to Kitchen staff.</p>
+        </fieldset>
+      </form>
+    </section>
+  </main>
+
+  <div id="result" class="collection-result" role="dialog" aria-modal="true" aria-labelledby="resultTitle" hidden>
+    <div id="resultBox" class="collection-result-box"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="shared_config.js"></script>
+  <script src="shared_supabase.js"></script>
+  <script src="shared_utils.js"></script>
+  <script src="meal_meal.js"></script>
 </body>
 </html>
