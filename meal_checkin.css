@@ -1,0 +1,65 @@
+.mode-banner.holiday{
+  border-color:#e8c57c;
+  background:#fff4e0;
+  color:#7b4b00
+}
+
+.checkin-meals{grid-template-columns:repeat(3,minmax(0,1fr))}
+.checkin-meal{
+  display:grid;
+  min-height:76px;
+  align-content:center;
+  gap:4px
+}
+.checkin-meal small{font-size:12px;font-weight:750;opacity:.78}
+.checkin-meal:disabled{background:#f1f3f5;color:#7f8993;border-color:#d7dde4}
+.checkin-meal.selected:disabled{background:#f1f3f5;color:#7f8993}
+
+.supper-note{
+  margin:14px 0 0;
+  padding:13px 15px;
+  border-radius:12px;
+  background:#edf3fa;
+  color:#31506f;
+  font-size:14px
+}
+
+.review-step{background:#f9fbfd}
+.checkin-review{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.checkin-review div{
+  display:grid;
+  gap:4px;
+  min-height:78px;
+  align-content:center;
+  padding:13px;
+  border:1px solid #dce3eb;
+  border-radius:12px;
+  background:#fff
+}
+.checkin-review span{color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase}
+.checkin-review strong{font-size:16px}
+
+.checkin-confirmation{
+  max-width:620px;
+  margin:20px auto 0;
+  overflow:hidden;
+  border:2px solid #9bceb0;
+  border-radius:22px;
+  background:#fff;
+  box-shadow:0 16px 42px #1824361f;
+  text-align:left
+}
+.checkin-confirmation header{padding:24px;background:#f8fcf9;text-align:center}
+.checkin-confirmation header h3{margin:0 0 5px;font-size:32px}
+.checkin-confirmation header p{margin:0;color:var(--muted)}
+.checkin-confirmation dl{display:grid;grid-template-columns:1fr 1fr;margin:0}
+.checkin-confirmation dl div{padding:18px 20px;border-top:1px solid #e3e9e5}
+.checkin-confirmation dl div:nth-child(odd){border-right:1px solid #e3e9e5}
+.checkin-confirmation dt{color:var(--muted);font-size:11px;font-weight:900;text-transform:uppercase}
+.checkin-confirmation dd{margin:5px 0 0;font-size:18px;font-weight:900}
+
+@media(max-width:620px){
+  .checkin-meals,.checkin-review{grid-template-columns:1fr}
+  .checkin-confirmation dl{grid-template-columns:1fr}
+  .checkin-confirmation dl div:nth-child(odd){border-right:0}
+}

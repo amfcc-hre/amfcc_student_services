@@ -615,3 +615,4 @@ window.AMFCC = (() => {
     else if(page==='admin_gate_passes.html')patchAdminGatePassPage();
   },0),{once:true});
 })();
+

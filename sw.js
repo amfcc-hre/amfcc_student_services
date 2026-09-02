@@ -1,8 +1,9 @@
-const CACHE='amfcc-student-services-v21-meal-collection';
+const CACHE='amfcc-student-services-v22-meal-checkin-collection';
 const CORE=[
   './','./index.html','./manifest.webmanifest','./assets_icon.png',
   './shared_ui.css','./shared_config.js','./shared_supabase.js','./shared_utils.js',
   './shared_scanner.js','./shared_sounds.js',
+  './meal_checkin_index.html','./meal_checkin.css','./meal_checkin.js',
   './meal_index.html','./meal_meal.css','./meal_meal.js',
   './library_index.html','./library_student.css','./library_student.js',
   './gate_index.html','./gate_gate.css','./gate_gate.js',

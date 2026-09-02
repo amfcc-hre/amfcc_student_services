@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#173a63">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>AMFCC Meal Check-In</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets_icon.png">
+  <link rel="stylesheet" href="shared_ui.css">
+  <link rel="stylesheet" href="meal_meal.css">
+  <link rel="stylesheet" href="meal_checkin.css">
+</head>
+<body>
+  <main class="container narrow meal-shell">
+    <section class="screen active">
+      <div class="topbar">
+        <a class="back" href="index.html">← Student Services</a>
+        <h1>Meal Check-In</h1>
+        <span id="studentStatus" class="status-badge online">● Online</span>
+      </div>
+
+      <div id="modeBanner" class="conference-banner mode-banner" hidden>
+        <div id="modeIcon" class="conference-icon" aria-hidden="true">⛔</div>
+        <div>
+          <strong id="modeTitle">Meal check-in is closed</strong>
+          <p id="modeMessage">Checking the current school mode.</p>
+        </div>
+      </div>
+
+      <form id="checkinForm" class="card collection-card checkin-card" autocomplete="off">
+        <header class="form-heading">
+          <p class="eyebrow">Tell Kitchen to include you</p>
+          <h2>Check in before the meal</h2>
+          <p class="muted">This check-in helps Kitchen plan. You will still use Meal Collection when you arrive to receive food.</p>
+        </header>
+
+        <fieldset id="checkinFields" disabled>
+          <section class="form-step">
+            <div class="step-heading">
+              <span class="step-number">1</span>
+              <div><h3>Choose the meal</h3><p>Check-in is for Breakfast, Lunch and Break-fast 4pm only.</p></div>
+            </div>
+            <div id="checkinMeals" class="meals checkin-meals" aria-label="Meal selection"></div>
+            <p class="supper-note"><strong>Supper:</strong> no check-in is needed because Kitchen cooks for everyone.</p>
+          </section>
+
+          <section class="form-step">
+            <div class="step-heading">
+              <span class="step-number">2</span>
+              <div><h3>Select your exact record</h3><p>Search by name or registration number, then click your record.</p></div>
+            </div>
+            <div class="field student-search-field">
+              <label for="studentSearch">Your name or registration number</label>
+              <input id="studentSearch" type="search" autocomplete="off" placeholder="Start typing a name or ID number" aria-controls="studentSearchResults" aria-autocomplete="list">
+              <div id="studentSearchResults" class="student-search-results" role="listbox" hidden></div>
+            </div>
+            <div id="studentSelected" class="selected-student empty-selection">No student selected yet.</div>
+          </section>
+
+          <section class="form-step review-step">
+            <div class="step-heading">
+              <span class="step-number">3</span>
+              <div><h3>Review and check in</h3><p>Confirm the meal and your exact record before saving.</p></div>
+            </div>
+            <div class="checkin-review" aria-live="polite">
+              <div><span>Meal</span><strong id="reviewMeal">Not selected</strong></div>
+              <div><span>Student</span><strong id="reviewStudent">Not selected</strong></div>
+              <div><span>Date</span><strong id="reviewDate">Today</strong></div>
+            </div>
+          </section>
+
+          <button id="checkinButton" class="btn blue collect-button" type="submit" disabled>Check in</button>
+          <p class="submit-help">Check in once for each meal. Use Meal Collection separately when you arrive for food.</p>
+        </fieldset>
+      </form>
+    </section>
+  </main>
+
+  <div id="result" class="collection-result" role="dialog" aria-modal="true" aria-labelledby="resultTitle" hidden>
+    <div id="resultBox" class="collection-result-box"></div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="shared_config.js"></script>
+  <script src="shared_supabase.js"></script>
+  <script src="shared_utils.js"></script>
+  <script src="meal_checkin.js"></script>
+</body>
+</html>

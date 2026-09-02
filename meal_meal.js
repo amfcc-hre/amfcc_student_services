@@ -374,7 +374,7 @@ async function loadMode(){
   modeReady=true;
   applyConferenceState(
     Boolean(data.conference_mode),
-    'Meal check-in is unavailable while Conference Mode is on.'
+    'Meal collection is unavailable while Conference Mode is on.'
   );
 }
 
@@ -426,7 +426,7 @@ async function collectMeal(event){
   if(error){
     if(/Conference Mode/i.test(error.message||'')){
       modeReady=true;
-      applyConferenceState(true,'Meal check-in is unavailable while Conference Mode is on.');
+      applyConferenceState(true,'Meal collection is unavailable while Conference Mode is on.');
       showFailure('error','Conference Mode is on',error.message);
       return;
     }

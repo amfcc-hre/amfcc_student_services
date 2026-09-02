@@ -4,3 +4,4 @@ window.APP_CONFIG = {
   GATE_DEVICE_TOKEN: "AMFCC-GATE-7X4Q-2026-K9M2",
   TIMEZONE: "Africa/Harare"
 };
+

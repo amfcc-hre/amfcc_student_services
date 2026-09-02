@@ -1,19 +1,21 @@
 # AMFCC Student Services
 
-Student-facing meal check-in, personal gate-pass and Library self-service tools for AMFCC.
+Student-facing meal check-in, meal collection, personal gate-pass, duty and Library self-service tools for AMFCC.
 
 **Repository:** [amfcc-hre/amfcc_student_services](https://github.com/amfcc-hre/amfcc_student_services)  
 **Live site:** [AMFCC Student Services](https://amfcc-hre.github.io/amfcc_student_services/)
 
 ## Purpose
 
-Student Services gives students direct access to three services:
+Student Services gives students direct access to five services:
 
-1. Student Meal Check-In
-2. Personal Gate Passes
-3. Student Library
+1. Meal Check-In
+2. Meal Collection
+3. Personal Gate Passes
+4. Student Library
+5. Duties
 
-Students do not need a staff PIN. They identify themselves using their student card, registration number or the student search provided by the service.
+Students do not need a staff PIN. Wherever a student must be selected, they use the same live name or registration-number search and click the exact record.
 
 Kitchen staff and Clinic staff tools do not belong in this repository. They use protected workspaces in Department Operations.
 
@@ -32,17 +34,33 @@ The student loan lookup intentionally shows current loans only. It does not disp
 
 A registration number is convenient identification, not strong authentication. If the school later decides that loan information needs more privacy, the same page can be changed to require a student-card scan or an additional piece of information.
 
-## Student Meal Check-In
+## Meal Check-In
+
+Meal Check-In is the preparation count. During School Term Mode, students:
+
+- choose Breakfast, Lunch or Break-fast 4pm;
+- search by name or registration number and click their exact active-student record; and
+- click **Check in** once for each meal.
+
+Breakfast keeps the existing 5:00 am cutoff and Break-fast 4pm keeps the existing 3:30 pm cutoff. Lunch is a separate check-in and remains open for the current school day because the school has not set a separate Lunch cutoff.
+
+Holiday Mode disables Meal Check-In. Conference Mode disables both Meal Check-In and Meal Collection. Supper never requires Meal Check-In because Kitchen cooks for everyone.
+
+## Meal Collection
 
 Students can:
 
-- choose the meal session displayed by the app;
-- scan the QR code on their student ID card using the iPad camera;
-- use a connected 2D scanner that operates as a keyboard;
-- enter their five-digit registration number manually; and
-- receive immediate confirmation, duplicate or error feedback.
+- choose Breakfast, Lunch, Break-fast 4pm or Supper;
+- search by their name or registration number and click their exact student record;
+- optionally collect for one other active student selected with the same lookup;
+- enter the number of children collecting with them without entering child names; and
+- show Kitchen staff a full-screen confirmation with the meal, date, time, recipients and total portions.
 
-The database checks that the registration number belongs to an active student, that the meal session is valid and that the check-in is for the current school date.
+The database saves the collector and optional additional student in one atomic collection. It rejects the whole collection if either student has already collected that meal on the current school date. Child portions are included in Kitchen totals.
+
+Conference Mode disables meal collection for students and staff. The database trigger also blocks submissions from older cached pages.
+
+Holiday Mode does not disable Meal Collection. Students still confirm collection when they arrive for food.
 
 The student page does not show Kitchen totals, Kitchen exports, food stock or Kitchen planning tools.
 
@@ -73,7 +91,13 @@ Conference Mode does not replace these gate-pass rules. The School Term or Holid
 
 The student notification address is saved privately against that pass. It is not added to the public student directory or returned in public pass lookups.
 
-When automatic mail is enabled by IT, the system emails School Administration, Student Leadership and the submitting student when the pass is submitted or changes to Approved, Rejected, Cancelled, Departed, Returned or Expired. The database chooses the recipients and message contents. Browser code can only ask the protected mail worker to process messages that the database has already queued.
+When automatic mail is enabled by IT, notifications are deliberately targeted:
+
+- School Administration receives a new-pass action email and one reminder if the pass is still pending with no decision 12 hours after the proposed departure time.
+- Student Leadership receives an alert when an expected return is overdue and when a Tanaka or Amalinda Shops checkout has lasted more than 70 minutes without a later check-in.
+- The submitting student continues to receive their own pass submission and status confirmations.
+
+School Administration and Student Leadership do not receive routine copies of every student status email. The database chooses the recipients and message contents. Browser code can only ask the protected mail worker to process messages already queued by the database.
 
 ## What is not included
 
@@ -95,13 +119,14 @@ Existing gate-terminal files may remain in this repository because the campus ch
 
 - The browser contains a Supabase publishable key only.
 - Never add a Supabase secret key or legacy `service_role` key to this repository.
-- Student meal check-in can call only the validated student check-in database function.
+- Student meal check-in and collection can call only their validated database functions.
 - Kitchen staff controls remain behind a protected Department Operations session.
 - Public approved-pass information is limited to names and current status.
 - Public catalogue results contain book details, shelf location and copy availability only.
 - The registration-number lookup returns only current book titles and due dates. It does not return the student's name or borrowing history.
 - Detailed staff, fee and Clinic information is not available from the public landing page.
-- Duplicate meal check-ins are rejected by the database.
+- Duplicate meal collections are rejected by the database.
+- Conference Mode blocks meal collection at both the page and database layers.
 - Student notification addresses, staff recipient lists and the private mail outbox are not readable from the public browser role.
 
 ## Repository files
@@ -109,9 +134,12 @@ Existing gate-terminal files may remain in this repository because the campus ch
 | File or group | Purpose |
 | --- | --- |
 | `index.html` | Student Services landing page |
-| `meal_index.html` | Student Meal Check-In page |
-| `meal_meal.js` | Student meal selection, scanning and submission |
-| `meal_meal.css` | Meal Check-In styling |
+| `meal_checkin_index.html` | Student Meal Check-In page |
+| `meal_checkin.js` | Exact student lookup, meal-window rules and check-in confirmation |
+| `meal_checkin.css` | Meal Check-In styling |
+| `meal_index.html` | Student Meal Collection page |
+| `meal_meal.js` | Exact student lookup, portion selection and confirmation |
+| `meal_meal.css` | Meal Collection and full-screen confirmation styling |
 | `library_index.html` | Student catalogue and current-loan lookup page |
 | `library_student.js` | Catalogue search, availability filtering and registration-number loan lookup |
 | `library_student.css` | Student Library page styling |
@@ -138,16 +166,17 @@ The `04-student-services-admin-update` folder is an update for the existing repo
 1. Upload every file from the update folder to the root of `amfcc_student_services`.
 2. Replace `README.md`, `index.html`, `sw.js` and `admin_index.html`.
 3. Add or replace `admin_admin.js` and `admin_mode_patch.js`.
-4. Add or replace `meal_index.html`, `meal_meal.css` and `meal_meal.js`.
-5. Add `library_index.html`, `library_student.css` and `library_student.js`.
-6. Replace `passes_index.html`, `passes_passes.js` and `passes_passes.css`.
-7. Replace `admin_gate_passes.js` and `gate_gate.js`.
-8. Keep the remaining gate and shared files unless the update package contains an explicit replacement.
-9. Delete only these retired Clinic staff files:
+4. Add `meal_checkin_index.html`, `meal_checkin.css` and `meal_checkin.js`.
+5. Add or replace `meal_index.html`, `meal_meal.css` and `meal_meal.js`.
+6. Add `library_index.html`, `library_student.css` and `library_student.js`.
+7. Replace `passes_index.html`, `passes_passes.js` and `passes_passes.css`.
+8. Replace `admin_gate_passes.js` and `gate_gate.js`.
+9. Keep the remaining gate and shared files unless the update package contains an explicit replacement.
+10. Delete only these retired Clinic staff files:
    - `clinic_index.html`
    - `clinic_clinic.css`
    - `clinic_clinic.js`
-10. Keep all three `meal_*` files.
+11. Keep all three Meal Collection files and all three Meal Check-In files.
 
 The file `DELETE_CLINIC_STAFF_FILES.txt` repeats the exact Clinic cleanup list.
 
@@ -168,22 +197,29 @@ For a new installation, the complete Student Services repository is required, in
 
 ## Verification checklist
 
-1. Open the landing page and confirm Student Meal Check-In, Personal Gate Passes and Student Library appear.
+1. Open the landing page and confirm Meal Check-In, Meal Collection, Personal Gate Passes, Student Library and Duties appear.
 2. Confirm no Kitchen staff or Clinic staff card appears.
-3. Open Student Meal Check-In.
-4. Select a meal and test a valid student registration number.
-5. Test the iPad camera Scan button.
-6. Test the connected 2D scanner and confirm it enters the registration number.
-7. Open Personal Gate Passes and search for a student.
-8. Confirm the page displays the correct School Term or Holiday pass rule.
-9. Confirm the pass form requires a valid email address.
-10. After IT enables mail, submit a controlled test pass and confirm the student, School Administration and Student Leadership receive the submission message.
-11. Open Student Library and search by title, author and ISBN.
-12. Untick the availability filter and confirm titles with no available copy can also be displayed.
-13. Open the compatibility School Administration page and test gender, class and campus-status filters on Campus, Accommodation, Gate passes, Fees, Gate duty and Recent movements.
-14. Enter a five-digit registration number and confirm only current loans and due dates appear.
-15. Confirm the site does not link to the retired Clinic files.
-16. Confirm meal-attendance exports remain available to authorised staff in Department Operations.
+3. During School Term Mode, open Meal Check-In and confirm only Breakfast, Lunch and Break-fast 4pm appear.
+4. Search for a student, click the exact record and confirm the review card shows the meal, student and date.
+5. Confirm Holiday Mode disables Meal Check-In while leaving Meal Collection available.
+6. Confirm Conference Mode disables both Meal Check-In and Meal Collection.
+7. Open Meal Collection.
+8. Select a meal, search for a student by name or registration number and click the exact record.
+9. Tick the additional-person option and select a different exact student record.
+10. Enter a child portion count and confirm the total updates.
+11. Save only with approved test records and confirm the full-screen Kitchen view shows the meal, date, time, recipients and total portions.
+12. Open Personal Gate Passes and search for a student.
+13. Confirm the page displays the correct School Term or Holiday pass rule.
+14. Confirm the pass form requires a valid email address.
+15. After IT enables mail, submit a controlled test pass and confirm the student and School Administration receive it. Confirm Student Leadership does not receive a routine submission copy.
+16. Verify the 12-hour unresolved-pending reminder goes only to School Administration.
+17. Verify overdue-return and Tanaka-over-70-minute alerts go only to Student Leadership.
+18. Open Student Library and search by title, author and ISBN.
+19. Untick the availability filter and confirm titles with no available copy can also be displayed.
+20. Open the compatibility School Administration page and test gender, class and campus-status filters on Campus, Accommodation, Gate passes, Fees, Gate duty and Recent movements.
+21. Enter a five-digit registration number and confirm only current loans and due dates appear.
+22. Confirm the site does not link to the retired Clinic files.
+23. Confirm meal-attendance exports remain available to authorised staff in Department Operations.
 
 ## Troubleshooting
 
@@ -195,19 +231,11 @@ The service worker may be serving an older cached version.
 2. Refresh the page.
 3. On an iPad home-screen installation, remove the old shortcut and add it again if necessary.
 
-### The camera does not open
+### A student does not appear in meal search
 
-1. Confirm the site is using HTTPS.
-2. Allow camera access for the browser.
-3. Close any other app using the camera.
-4. Use the connected scanner or manual registration entry as the fallback.
-
-### A connected scanner does not enter the card number
-
-1. Test the scanner in a plain text field.
-2. Confirm it is in keyboard or HID mode.
-3. Confirm it outputs the five-digit student registration number or a card value the app can normalise.
-4. Confirm the cursor is in the registration-number field before scanning.
+1. Enter at least two letters of the name or two digits of the registration number.
+2. Confirm the student is active in the student directory.
+3. Click the exact result rather than leaving typed text in the search field.
 
 ### Meal check-in says the card is not recognised
 

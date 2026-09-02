@@ -6,3 +6,4 @@
     window.APP_CONFIG.SUPABASE_PUBLISHABLE_KEY
   );
 })();
+
