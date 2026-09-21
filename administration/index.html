@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#173a63">
+  <title>AMFCC Administration Staff</title>
+  <link rel="icon" href="../assets_icon.png"><link rel="stylesheet" href="../shared_ui.css?v=9"><link rel="stylesheet" href="administration.css?v=1">
+</head>
+<body>
+  <div id="toast" class="admin-toast" role="status" hidden></div>
+  <main id="loginScreen" class="login-shell">
+    <section class="login-card">
+      <img src="../assets_icon.png" alt="AMFCC"><p class="eyebrow">AMFCC Harare</p><h1>Administration Staff</h1>
+      <p class="muted">Term enrolments, fee records, sponsors, accommodation and official forms.</p>
+      <form id="loginForm" class="form-stack">
+        <div class="field"><label for="loginRole">Access role</label><select id="loginRole"><option value="admin_staff">Administration Staff</option><option value="administrator">School Administration</option><option value="it_admin">IT Administration</option><option value="management">Management (read-only)</option></select></div>
+        <div class="field"><label for="loginPin">4-digit PIN</label><input id="loginPin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required></div>
+        <button class="btn primary" type="submit">Open Administration</button><div id="loginMessage" class="notice bad" hidden></div>
+      </form>
+    </section>
+  </main>
+
+  <div id="appShell" class="admin-shell" hidden>
+    <header class="admin-header"><div><p class="eyebrow">AMFCC Harare</p><h1>Administration Staff</h1><p id="sessionLabel" class="muted"></p></div><div class="header-actions"><button id="refreshButton" class="btn secondary" type="button">Refresh</button><button id="logoutButton" class="btn secondary" type="button">Sign out</button></div></header>
+    <nav id="mainNav" class="admin-nav"><button class="active" data-view="overview">Overview</button><button data-view="enrolments">Enrolments</button><button data-view="sponsors">Sponsors</button><button data-view="accommodation">Accommodation</button></nav>
+    <main class="workspace">
+      <section id="view-overview" class="view active">
+        <div class="view-heading"><div><p class="eyebrow">Current term</p><h2 id="overviewTerm">Term enrolment</h2></div><span id="openState" class="state-pill"></span></div>
+        <div id="summaryCards" class="summary-grid"></div>
+        <article id="termControl" class="panel" hidden>
+          <div class="panel-heading"><div><h3>Open or close student enrolment</h3><p>Normal windows are Jan–Feb (Term 1), May (Term 2), and Sep–Oct (Term 3). The switch below is the final authority.</p></div></div>
+          <form id="termForm" class="term-form"><label>Academic year<input id="termYear" type="number" min="2020" max="2100" required></label><label>Term<select id="termNumber"><option value="1">Term 1</option><option value="2">Term 2</option><option value="3">Term 3</option></select></label><label>Recorded by<input id="termActor" required placeholder="Your name"></label><div class="term-actions"><button class="btn good" data-action="open" type="button">Open enrolment</button><button class="btn danger" data-action="close" type="button">Close enrolment</button><button class="btn secondary" data-action="refresh_expected" type="button">Refresh student list</button></div></form>
+        </article>
+        <article class="panel"><div class="panel-heading"><div><h3>Needs attention</h3><p>Students who have not submitted or whose staff sections are still incomplete.</p></div><button class="btn secondary jump" data-view="enrolments">Open enrolments</button></div><div id="attentionList" class="attention-list"></div></article>
+      </section>
+
+      <section id="view-enrolments" class="view">
+        <div class="view-heading"><div><p class="eyebrow">Term-specific history</p><h2>Student enrolments</h2></div><label>Term<select id="termSelect"></select></label></div>
+        <div class="panel filters"><input id="enrolmentSearch" type="search" placeholder="Search name or registration number"><select id="statusFilter"><option value="all">All statuses</option><option value="submitted">Submitted</option><option value="not_submitted">Not submitted</option><option value="completed">Completed</option><option value="waiting_admin">Waiting for staff</option></select><select id="classFilter"><option value="all">All classes</option><option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option></select><select id="residencyFilter"><option value="all">All residency</option><option value="local">Local</option><option value="international">International</option><option value="not_recorded">Not recorded</option></select></div>
+        <article class="panel table-panel"><div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Status</th><th>Submitted</th><th>Sponsor</th><th>Accommodation</th><th>Balance</th><th></th></tr></thead><tbody id="enrolmentRows"></tbody></table></div></article>
+      </section>
+
+      <section id="view-sponsors" class="view"><div class="view-heading"><div><p class="eyebrow">Stored once, confirmed each term</p><h2>Sponsors</h2></div></div><article class="panel"><input id="sponsorSearch" class="wide-search" type="search" placeholder="Search sponsor name or phone"><div class="table-wrap"><table class="data-table"><thead><tr><th>Sponsor</th><th>Contact</th><th>Email</th><th>Relationship</th><th>Students</th></tr></thead><tbody id="sponsorRows"></tbody></table></div></article></section>
+
+      <section id="view-accommodation" class="view"><div class="view-heading"><div><p class="eyebrow">Selected term</p><h2>Room allocations</h2></div></div><article class="panel"><input id="accommodationSearch" class="wide-search" type="search" placeholder="Search student, hostel or room"><div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Type</th><th>Hostel</th><th>Room</th><th>Status</th><th></th></tr></thead><tbody id="accommodationRows"></tbody></table></div></article></section>
+    </main>
+  </div>
+
+  <div id="recordModal" class="modal" aria-hidden="true"><div class="modalbox record-modal">
+    <div class="modal-heading"><div><p class="eyebrow">Official term record</p><h2 id="recordTitle">Student enrolment</h2><p id="recordMeta" class="muted"></p></div><button id="closeRecord" class="icon-button" type="button" aria-label="Close">×</button></div>
+    <div class="record-status"><span id="recordStatus" class="state-pill"></span><span id="recordLock" class="muted"></span></div>
+    <details open><summary>Student submission</summary><div id="studentAnswers" class="answer-grid"></div></details>
+    <details open><summary>Sponsor</summary><div class="grid two form-grid"><div class="field"><label>Name</label><input id="sponsorName"></div><div class="field"><label>Contact number</label><input id="sponsorPhone"></div><div class="field"><label>Email</label><input id="sponsorEmail" type="email"></div><div class="field"><label>Relationship</label><input id="sponsorRelationship"></div><div class="field span-two"><label>Address</label><input id="sponsorAddress"></div><div class="field span-two"><label>Notes</label><textarea id="sponsorNotes"></textarea></div></div></details>
+    <details open><summary>Administration and fees</summary><div class="grid two form-grid"><div class="field"><label>Official date of arrival</label><input id="arrivalDate" type="date"></div><div class="field"><label>Arrears from previous terms</label><input id="feeArrears" type="number" step="0.01" min="0"></div><div class="field"><label>Amount paid current term</label><input id="feePaid" type="number" step="0.01" min="0"></div><div class="field"><label>Outstanding balance</label><input id="feeBalance" type="number" step="0.01" min="0"></div><div class="field span-two"><label>Payment plan</label><textarea id="paymentPlan"></textarea></div><div class="field span-two"><label>Fees certified by</label><input id="feesCertifiedBy"></div></div></details>
+    <details open><summary>Accommodation</summary><div class="grid two form-grid"><div class="field"><label>Type</label><select id="adminAccommodationType"><option value="">Choose</option><option>Shared</option><option>Married</option></select></div><div id="adminHostelField" class="field"><label>Hostel</label><input id="adminHostel"></div><div id="adminRoomField" class="field"><label>Room</label><input id="adminRoom"></div><div id="adminOccupantsField" class="field"><label>Occupants</label><input id="adminOccupants" type="number" min="1"></div><div class="field span-two"><label>Accommodation certified by</label><input id="accommodationCertifiedBy"></div></div></details>
+    <details><summary>Immigration information</summary><div id="immigrationSummary" class="answer-grid"></div><div id="immigrationDocuments" class="document-list"></div></details>
+    <details><summary>Final approval and history</summary><div class="field"><label>Principal / authorised signatory</label><input id="principalSignature"></div><div class="field"><label>Staff note</label><textarea id="staffNote"></textarea></div><div id="historyList" class="history-list"></div></details>
+    <div class="modal-actions"><button id="saveRecord" class="btn primary" type="button">Save staff sections</button><button id="finalizeRecord" class="btn good" type="button">Complete enrolment</button><button id="studentPdf" class="btn secondary" type="button">Student PDF</button><button id="finalPdf" class="btn secondary" type="button">Current PDF</button></div>
+  </div></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="../shared_config.js"></script><script src="../shared_supabase.js"></script><script src="../registration_pdf.js?v=1"></script><script src="administration.js?v=1"></script>
+</body></html>
