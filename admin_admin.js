@@ -5,6 +5,7 @@ let dataCache=null;
 let timer=null;
 let reviewPassId=null;
 let editOriginal=null;
+let adminEnrolmentData=null;
 
 
 function closeLoginOverlay(){
@@ -48,6 +49,12 @@ async function load(){
   dataCache=data;
   selectedTermId=String(data.selected_term?.id||'');
   render();
+  loadAdminEnrolment().catch(error=>{
+    if($('adminEnrolmentState')){
+      $('adminEnrolmentState').className='notice bad';
+      $('adminEnrolmentState').textContent=error.message||'Term enrolment could not be loaded.';
+    }
+  });
   $('updated').textContent='Updated '+new Date().toLocaleTimeString('en-ZW');
   return true;
 }
@@ -429,6 +436,39 @@ async function exportReport(){
   try{downloadCsv(rows,`${type}-${year==='ALL'?'all-years':`year-${year}`}-${start||'start'}-${end||localDate()}.csv`);}catch(e){toast('warn','No records',e.message);}
 }
 
+async function loadAdminEnrolment(termId){
+  if(!pin||!$('adminEnrolmentState'))return;
+  const {data,error}=await amfccDb.rpc('admin_term_registration_dashboard',{p_pin:pin,p_term_id:termId?Number(termId):null});
+  if(error||data?.status!=='success')throw new Error(error?.message||data?.message||'Term enrolment could not be loaded.');
+  adminEnrolmentData=data;
+  const term=data.selected_term||{},summary=data.summary||{};
+  $('adminEnrolmentYear').value=term.academic_year||new Date().getFullYear();
+  $('adminEnrolmentTerm').value=term.term_number||1;
+  updateAdminEnrolmentWindow();
+  $('adminEnrolmentState').className='notice '+(term.registration_is_open?'good enrolment-state-open':'info enrolment-state-closed');
+  $('adminEnrolmentState').textContent=(term.term_name||'Selected term')+' · Student enrolment is '+(term.registration_is_open?'OPEN':'CLOSED')+'. The toggle remains authoritative outside the normal month window.';
+  $('adminEnrolmentSummary').innerHTML=[['Expected',summary.expected||0],['Submitted',summary.submitted||0],['Not started',summary.not_started||0],['Completed',summary.completed||0]].map(item=>`<div class="enrolment-stat"><strong>${item[1]}</strong><span>${item[0]}</span></div>`).join('');
+  $('adminEnrolmentRows').innerHTML=(data.registrations||[]).map(row=>`<tr><td><b>${esc(row.student_name)}</b></td><td>${esc(row.registration_number)}</td><td><span class="pill ${row.completed_at?'approved':row.student_submitted_at?'pending':'unknown'}">${esc(row.status_label)}</span></td><td>${row.student_submitted_at?esc(formatDateTime(row.student_submitted_at)):'—'}</td></tr>`).join('')||'<tr><td colspan="4" class="empty">No expected students have been added for this term.</td></tr>';
+}
+
+function updateAdminEnrolmentWindow(){
+  const labels={1:'January and February',2:'May',3:'September and October'};
+  $('adminEnrolmentWindow').value=labels[Number($('adminEnrolmentTerm').value)]||'';
+}
+
+async function manageAdminEnrolment(action,button){
+  const year=Number($('adminEnrolmentYear').value),term=Number($('adminEnrolmentTerm').value);
+  if(!window.confirm(`${action==='open'?'Open':action==='close'?'Close':'Refresh'} Term ${term} ${year} enrolment?`))return;
+  const old=button.textContent;button.disabled=true;button.textContent='Applying…';
+  try{
+    const {data,error}=await amfccDb.rpc('admin_term_registration_manage_term',{p_pin:pin,p_academic_year:year,p_term_number:term,p_action:action});
+    if(error||data?.status!=='success')throw new Error(error?.message||data?.message||'The enrolment setting was not changed.');
+    toast('good','Term enrolment updated',`${data.term_name}: ${data.registration_is_open?'Open':'Closed'} · ${data.expected_students} expected students.`);
+    await loadAdminEnrolment(data.term_id);
+  }catch(error){toast('bad','Not changed',error.message||'Try again.');}
+  finally{button.disabled=false;button.textContent=old;}
+}
+
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>activateTab(b.dataset.tab));
 document.querySelectorAll('.metric-filter').forEach(b=>b.onclick=()=>applyMetricFilter(b.dataset.filterTab,b.dataset.filterValue,b));
 document.addEventListener('click',e=>{
@@ -469,6 +509,8 @@ $('holidayMode').onchange=async()=>{
 };
 $('saveSettings').onclick=saveSettings;
 $('exportMovements').onclick=exportMovements;$('exportReport').onclick=exportReport;
+$('adminEnrolmentTerm').onchange=updateAdminEnrolmentWindow;
+document.querySelectorAll('[data-enrolment-action]').forEach(button=>button.onclick=()=>manageAdminEnrolment(button.dataset.enrolmentAction,button));
 $('toast').onclick=()=>$('toast').classList.remove('open');
 
 const today=localDate();

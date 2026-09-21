@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#173a63">
+  <title>AMFCC Term Enrolment</title>
+  <link rel="apple-touch-icon" href="assets_icon.png">
+  <link rel="stylesheet" href="shared_ui.css?v=9">
+  <link rel="stylesheet" href="registration.css?v=1">
+</head>
+<body>
+  <main class="container narrow enrolment-shell">
+    <div class="topbar">
+      <a class="back" href="index.html">← Student Services</a>
+      <span id="saveState" class="save-state">Not started</span>
+    </div>
+
+    <header class="registration-hero">
+      <img src="assets_icon.png" alt="AMFCC">
+      <div><p class="eyebrow">AMFCC Harare</p><h1>Term Enrolment</h1><p id="termSummary" class="muted">Checking whether enrolment is open…</p></div>
+    </header>
+
+    <section id="closedPanel" class="card state-panel" hidden>
+      <div class="state-icon">🔒</div><h2>Enrolment is closed</h2>
+      <p>There is no open term enrolment at the moment. School Administration will make this form available when registration opens.</p>
+    </section>
+
+    <section id="lookupPanel" class="card" hidden>
+      <div class="step-label">Step 1 of 2</div>
+      <h2>Find your student record</h2>
+      <p class="muted">Enter the five-digit registration number issued by AMFCC.</p>
+      <form id="lookupForm" class="form-stack">
+        <div class="field"><label for="registrationNumber">Registration number</label><input id="registrationNumber" inputmode="numeric" autocomplete="off" pattern="[0-9]{5}" maxlength="5" placeholder="e.g. 26041" required></div>
+        <button class="btn primary" type="submit">Continue</button>
+      </form>
+      <div id="lookupMessage" class="notice bad" hidden></div>
+    </section>
+
+    <section id="confirmPanel" class="card state-panel" hidden>
+      <div class="state-icon">✓</div><p class="eyebrow">Confirm your record</p>
+      <h2 id="confirmName"></h2><p id="confirmDetails" class="muted"></p>
+      <div class="button-row"><button id="startButton" class="btn primary" type="button">Start enrolment</button><button id="notMeButton" class="btn secondary" type="button">Not me</button></div>
+    </section>
+
+    <form id="enrolmentForm" hidden>
+      <section class="card form-intro">
+        <div class="step-label">Step 2 of 2</div><h2>Student sections</h2>
+        <p>Complete Section A, your sponsor name and number in Section B, and your accommodation choice in Section C. Administration will complete the remaining fields.</p>
+        <div id="studentIdentity" class="identity-card"></div>
+      </section>
+
+      <section class="card official-section">
+        <div class="section-heading"><span>A</span><div><p class="eyebrow">Section A</p><h2>Personal details</h2></div></div>
+        <div class="grid two">
+          <div class="field"><label for="gender">Gender</label><select id="gender" required><option value="">Choose</option><option>Male</option><option>Female</option></select></div>
+          <div class="field"><label for="maritalStatus">Marital status</label><select id="maritalStatus" required><option value="">Choose</option><option>Single</option><option>Married</option><option>Widowed</option><option>Divorced</option></select></div>
+          <div id="spouseField" class="field span-two" hidden><label for="spouseLocation">Where is your spouse?</label><input id="spouseLocation" placeholder="Town, country or current location"></div>
+          <div class="field span-two"><label for="identityNumber">National ID or passport number</label><input id="identityNumber" autocomplete="off" required><small>International students should enter their passport number.</small></div>
+        </div>
+      </section>
+
+      <section class="card official-section">
+        <div class="section-heading"><span>B</span><div><p class="eyebrow">Section B</p><h2>Sponsor details</h2></div></div>
+        <div class="grid two">
+          <div class="field"><label for="sponsorName">Sponsor name</label><input id="sponsorName" required></div>
+          <div class="field"><label for="sponsorContact">Sponsor contact number</label><input id="sponsorContact" type="tel" required></div>
+        </div>
+        <p class="admin-note">Arrears, payment, balance, payment plan and certification are completed by Administration.</p>
+      </section>
+
+      <section class="card official-section">
+        <div class="section-heading"><span>C</span><div><p class="eyebrow">Section C</p><h2>Accommodation</h2></div></div>
+        <div class="field"><label for="accommodationType">Type of accommodation</label><select id="accommodationType" required><option value="">Choose</option><option>Shared</option><option>Married</option></select></div>
+        <div id="sharedFields" class="grid two conditional-fields" hidden>
+          <div class="field"><label for="accommodationHostel">Hostel allocated</label><input id="accommodationHostel"></div>
+          <div class="field"><label for="accommodationRoom">Room number</label><input id="accommodationRoom"></div>
+          <div class="field span-two"><label for="sharedOccupants">Number of occupants in room</label><input id="sharedOccupants" type="number" min="1" max="30"></div>
+        </div>
+        <div id="marriedNote" class="notice info" hidden>No other accommodation information is required from you. Administration will complete the remaining section.</div>
+      </section>
+
+      <section class="card submit-card">
+        <div id="formMessage" class="notice bad" hidden></div>
+        <label class="confirm-check"><input id="accuracyConfirm" type="checkbox" required><span>I confirm that the information above is correct.</span></label>
+        <button id="submitButton" class="btn good" type="submit">Submit term enrolment</button>
+        <p class="muted small">Your draft saves automatically. After submission, only authorised Administration staff can make changes.</p>
+      </section>
+    </form>
+
+    <section id="submittedPanel" class="card state-panel success-panel" hidden>
+      <div class="state-icon">✓</div><p class="eyebrow">Submitted</p><h2>Term enrolment received</h2>
+      <p id="submittedMessage"></p>
+      <button id="downloadStudentPdf" class="btn primary" type="button">Download printable form</button>
+      <p class="muted small">The Administration sections remain blank until staff complete them.</p>
+    </section>
+  </main>
+  <div id="toast" class="registration-toast" role="status" hidden></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="shared_config.js"></script><script src="shared_supabase.js"></script>
+  <script src="registration_pdf.js?v=1"></script><script src="registration.js?v=1"></script>
+</body>
+</html>

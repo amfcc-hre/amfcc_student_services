@@ -63,6 +63,7 @@ function render(){
   const access=dataCache.access_level||'';
   $('accessBadge').textContent=access==='management'?'Management View':'Student Leadership View';
   $('accessBadge').className='access-badge '+access;
+  $('enrolmentLink').style.display=access==='management'?'inline':'none';
   $('settingsLink').style.display=dataCache.can_manage_settings?'inline':'none';
   $('leadershipPassNotice').style.display=dataCache.can_review_passes?'none':'block';
   $('holidayBanner').style.display=dataCache.school_holiday_mode?'block':'none';

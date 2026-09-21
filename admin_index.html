@@ -19,6 +19,7 @@
       <div id="holidayBanner" class="notice warn" style="display:none;margin-top:8px">School Holiday Mode is ON. Passes may be submitted at any time and require only School Administrator approval.</div>
     </div>
     <div class="term-context">
+      <a class="dashboard-link" href="administration/">Administration Staff</a>
       <a class="dashboard-link" href="https://amfcc-hre.github.io/department-operations/" target="_blank" rel="noopener">Department Operations</a>
       <label for="termSelect">Fee term</label>
       <select id="termSelect"></select>
@@ -42,6 +43,7 @@
     <button data-tab="duty">Gate duty</button>
     <button data-tab="recent">Recent movements</button>
     <button data-tab="reports">Reports</button>
+    <button data-tab="enrolment">Term enrolment</button>
     <button data-tab="settings">Settings</button>
   </div>
 
@@ -85,6 +87,17 @@
       <div id="movementExportSummary" class="movement-export-summary" aria-live="polite"></div>
     </div>
     <div class="report-panel"><h3>Detailed activity exports</h3><div class="grid four"><div class="field"><label>Report</label><select id="reportType"><option value="campus">Individual campus movements</option><option value="passes">Gate passes</option><option value="gate_duty">Gate duty</option><option value="meals">Meal attendance</option></select></div><div class="field"><label>Start date</label><input id="startDate" type="date"></div><div class="field"><label>End date</label><input id="endDate" type="date"></div><div class="field"><label>Class year</label><select id="detailYearFilter" aria-label="Class year"><option value="ALL">All years</option><option value="1">1st Year</option><option value="2">2nd Year</option><option value="3">3rd Year</option></select></div></div><button id="exportReport" class="btn secondary" style="margin-top:12px">Download detailed CSV</button></div>
+  </section>
+
+  <section id="enrolment" class="section card">
+    <div class="enrolment-heading"><div><h2>Term enrolment</h2><p class="muted">Open or close the student form and monitor who has submitted.</p></div><a class="btn primary admin-staff-link" href="administration/">Open full Administration Staff site</a></div>
+    <div id="adminEnrolmentState" class="notice info">Loading term enrolment…</div>
+    <div id="adminEnrolmentSummary" class="grid four enrolment-summary"></div>
+    <div class="enrolment-control-panel">
+      <div class="grid three"><div class="field"><label>Academic year</label><input id="adminEnrolmentYear" type="number" min="2020" max="2100"></div><div class="field"><label>Term</label><select id="adminEnrolmentTerm"><option value="1">Term 1</option><option value="2">Term 2</option><option value="3">Term 3</option></select></div><div class="field"><label>Normal window</label><input id="adminEnrolmentWindow" readonly></div></div>
+      <div class="enrolment-actions"><button class="btn good" data-enrolment-action="open">Open enrolment</button><button class="btn danger" data-enrolment-action="close">Close enrolment</button><button class="btn secondary" data-enrolment-action="refresh_expected">Refresh expected students</button></div>
+    </div>
+    <div class="table-wrap"><table class="data-table"><thead><tr><th>Student</th><th>Registration</th><th>Status</th><th>Submitted</th></tr></thead><tbody id="adminEnrolmentRows"><tr><td colspan="4" class="empty">Loading…</td></tr></tbody></table></div>
   </section>
 
   <section id="settings" class="section card">
