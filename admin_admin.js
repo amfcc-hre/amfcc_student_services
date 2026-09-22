@@ -4,6 +4,7 @@ let selectedTermId=null;
 let dataCache=null;
 let timer=null;
 let reviewPassId=null;
+let showPassArchive=false;
 let editOriginal=null;
 let adminEnrolmentData=null;
 
@@ -196,6 +197,8 @@ function renderPasses(){
     ?'School Holiday Mode: School Administrator approval alone completes a pass. The Wednesday deadline is paused.'
     :'Normal mode: each pass needs School Administrator approval plus one approval from the Principal, Dean or Director.';
   const rows=(dataCache.gate_passes||[]).filter(p=>{
+    const archived=['rejected','cancelled'].includes(p.status);
+    if(showPassArchive!==archived)return false;
     const statusMatch=filter==='ALL'||(filter==='OVERDUE'?Boolean(p.overdue):p.status===filter);
     const people=passPeople(p);
     const peopleMatch=people.some(person=>personMatches(person,gender,year,campus));
@@ -336,7 +339,6 @@ function openReview(id){
 
 async function decide(decision){
   const comments=$('decisionComments').value.trim();
-  if(['rejected','cancelled'].includes(decision)&&!comments)return toast('warn','Add a reason','A rejection or cancellation reason is required.');
   const {data,error}=await amfccDb.rpc('admin_gate_pass_decision',{p_pin:pin,p_pass_id:reviewPassId,p_decision:decision,p_comments:comments||null});
   if(error||data?.status!=='success')return toast('bad','Not saved',error?.message||data?.message||'Try again.');
   $('reviewModal').classList.remove('open');
@@ -487,6 +489,7 @@ $('termSelect').onchange=async()=>{selectedTermId=$('termSelect').value;await lo
 ['campusGenderFilter','campusFilter','campusYearFilter'].forEach(id=>$(id).onchange=renderCampus);$('campusSearch').oninput=renderCampus;
 ['accommodationGenderFilter','accommodationYearFilter','accommodationCampusFilter','accommodationFilter'].forEach(id=>$(id).onchange=renderAccommodation);$('accommodationSearch').oninput=renderAccommodation;
 ['passGenderFilter','passYearFilter','passCampusFilter','passFilter'].forEach(id=>$(id).onchange=renderPasses);$('passSearch').oninput=renderPasses;
+$('passArchiveToggle').onclick=()=>{showPassArchive=!showPassArchive;$('passFilter').value='ALL';$('passFilter').hidden=showPassArchive;$('passArchiveToggle').textContent=showPassArchive?'Back to current passes':'View rejected and cancelled passes';renderPasses();};
 ['feeGenderFilter','feeYearFilter','feeCampusFilter','feeFilter'].forEach(id=>$(id).onchange=renderFees);$('feeSearch').oninput=renderFees;
 ['dutyGenderFilter','dutyYearFilter','dutyCampusFilter'].forEach(id=>$(id).onchange=renderDuty);$('dutySearch').oninput=renderDuty;
 ['recentGenderFilter','recentYearFilter','recentCampusFilter'].forEach(id=>$(id).onchange=renderRecent);$('recentSearch').oninput=renderRecent;
