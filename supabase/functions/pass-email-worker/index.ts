@@ -10,7 +10,7 @@ type OutboxItem = {
   attempts: number;
 };
 
-const operationsUrl = "https://amfcc-hre.github.io/amfcc_department_operations/";
+const operationsUrl = "https://amfcc-hre.github.io/department-operations/";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
