@@ -1,6 +1,7 @@
 const {$,esc,formatDateTime,localDate,downloadCsv,studentYearLabel,studentYearMatches}=AMFCC;
 let pin=sessionStorage.getItem('amfcc_dashboard_pin')||'';
 let dataCache=null,timer=null,reviewPassId=null,editOriginal=null;
+let showPassArchive=false;
 
 
 function closeLoginOverlay(){
@@ -146,6 +147,8 @@ function renderPasses(){
   const filter=$('passFilter').value;
   const year=$('passYearFilter').value;
   const rows=(dataCache.gate_passes||[]).filter(p=>{
+    const archived=['rejected','cancelled'].includes(p.status);
+    if(showPassArchive!==archived)return false;
     const statusMatch=filter==='ALL'||(filter==='OVERDUE'?Boolean(p.overdue):p.status===filter);
     return yearMatches(p.registration_number,year)&&statusMatch&&(`${p.student_name} ${p.registration_number} ${p.destination}`.toLowerCase().includes(q));
   });
@@ -294,7 +297,6 @@ async function decide(decision){
   const role=$('actorRole').value;
   if(!role)return toast('warn','Choose a role','Select Principal, Dean or Director.');
   const comments=$('decisionComments').value.trim();
-  if(['rejected','cancelled'].includes(decision)&&!comments)return toast('warn','Add a reason','A rejection or cancellation reason is required.');
   const {data,error}=await amfccDb.rpc('dashboard_gate_pass_decision',{p_pin:pin,p_pass_id:reviewPassId,p_actor_role:role,p_decision:decision,p_comments:comments||null});
   if(error||data?.status!=='success')return toast('bad','Not saved',error?.message||data?.message||'Try again.');
   $('reviewModal').classList.remove('open');
@@ -406,6 +408,7 @@ $('accommodationYearFilter').onchange=renderAccommodation;
 $('passSearch').oninput=renderPasses;
 $('passFilter').onchange=renderPasses;
 $('passYearFilter').onchange=renderPasses;
+$('passArchiveToggle').onclick=()=>{showPassArchive=!showPassArchive;$('passFilter').value='ALL';$('passFilter').hidden=showPassArchive;$('passArchiveToggle').textContent=showPassArchive?'Back to current passes':'View rejected and cancelled passes';renderPasses();};
 $('dutySearch').oninput=renderDuty;
 $('dutyYearFilter').onchange=renderDuty;
 $('recentSearch').oninput=renderRecent;
