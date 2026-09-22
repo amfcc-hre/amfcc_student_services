@@ -26,14 +26,13 @@
     <div class="toolbar">
       <input id="passSearch" placeholder="Search student, registration or destination">
       <select id="passFilter">
-        <option value="ALL">All statuses</option>
+        <option value="ALL">All active pass statuses</option>
         <option value="pending">Pending</option>
         <option value="approved">Approved</option>
         <option value="departed">Departed</option>
         <option value="returned">Returned</option>
-        <option value="rejected">Rejected</option>
-        <option value="cancelled">Cancelled</option>
       </select>
+      <button id="passArchiveToggle" class="btn secondary" type="button">View rejected and cancelled passes</button>
     </div>
     <div class="notice info">Open a pass to edit its departure and return date or time. You can save the dates only, or save the dates while approving the pass.</div>
     <div class="table-wrap">
@@ -72,8 +71,8 @@
     </div>
 
     <div class="field" style="margin-top:12px">
-      <label>Comments or reason</label>
-      <textarea id="decisionComments" placeholder="Required for rejection or cancellation"></textarea>
+      <label>Comments or reason (optional)</label>
+      <textarea id="decisionComments" placeholder="Optional"></textarea>
     </div>
 
     <button id="saveSchedule" class="btn secondary" style="width:100%;margin-top:12px">Save date and time changes</button>
@@ -93,7 +92,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="shared_config.js"></script>
 <script src="shared_supabase.js"></script>
-<script src="shared_utils.js?v=9.0"></script>
-<script src="admin_gate_passes.js?v=9.0"></script>
+<script src="shared_utils.js?v=10.1"></script>
+<script src="admin_gate_passes.js?v=10.1"></script>
 </body>
 </html>
