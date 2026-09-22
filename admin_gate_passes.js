@@ -3,6 +3,7 @@ const {$,esc,formatDateTime}=AMFCC;
 let pin=sessionStorage.getItem('amfcc_admin_pin')||'';
 let dataCache=null;
 let reviewPassId=null;
+let showPassArchive=false;
 
 function dispatchPassEmail(){
   if(amfccDb.functions&&typeof amfccDb.functions.invoke==='function'){
@@ -56,6 +57,8 @@ function renderPasses(){
   const status=$('passFilter').value;
 
   const rows=(dataCache?.gate_passes||[]).filter(pass=>{
+    const archived=['rejected','cancelled'].includes(pass.status);
+    if(showPassArchive!==archived)return false;
     const statusMatch=status==='ALL'||pass.status===status;
     const text=`${pass.student_name} ${pass.registration_number} ${pass.destination}`.toLowerCase();
     return statusMatch&&text.includes(query);
@@ -125,9 +128,6 @@ async function saveReview(decision=null){
   if(!departure||!expectedReturn){
     return toast('warn','Dates required','Enter both the departure and expected return date and time.');
   }
-  if(['rejected','cancelled'].includes(decision)&&!comments){
-    return toast('warn','Add a reason','A rejection or cancellation reason is required.');
-  }
 
   document.querySelectorAll('#reviewModal button').forEach(button=>button.disabled=true);
 
@@ -185,6 +185,7 @@ $('pin').onkeydown=event=>{
 $('refresh').onclick=load;
 $('passSearch').oninput=renderPasses;
 $('passFilter').onchange=renderPasses;
+$('passArchiveToggle').onclick=()=>{showPassArchive=!showPassArchive;$('passFilter').value='ALL';$('passFilter').hidden=showPassArchive;$('passArchiveToggle').textContent=showPassArchive?'Back to current passes':'View rejected and cancelled passes';renderPasses();};
 $('saveSchedule').onclick=()=>saveReview(null);
 $('closeReview').onclick=()=>{
   $('reviewModal').classList.remove('open');
