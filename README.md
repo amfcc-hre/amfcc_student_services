@@ -93,7 +93,8 @@ The student notification address is saved privately against that pass. It is not
 
 When automatic mail is enabled by IT, notifications are deliberately targeted:
 
-- School Administration receives a new-pass action email and one reminder if the pass is still pending with no decision 12 hours after the proposed departure time.
+- School Administration receives its own new-pass action email and one reminder if the pass is still pending with no decision 12 hours after the proposed departure time.
+- Management receives a separate actionable email and can record the senior approval as Principal, Dean or Director after entering the Management PIN.
 - Student Leadership receives an alert when an expected return is overdue and when a Tanaka or Amalinda Shops checkout has lasted more than 70 minutes without a later check-in.
 - The submitting student continues to receive their own pass submission and status confirmations.
 
