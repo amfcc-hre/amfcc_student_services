@@ -224,6 +224,7 @@ window.AMFCC = (() => {
   function patchDashboard(){
     injectV10Styles();
     removeMaternityControls();
+    let passArchive=false;
 
     window.healthHtml=function(student){
       return student?.bed_rest
@@ -268,6 +269,8 @@ window.AMFCC = (() => {
       const filter=$('passFilter')?.value||'ALL';
       const year=$('passYearFilter')?.value||'ALL';
       const rows=(dataCache?.gate_passes||[]).filter(pass=>{
+        const archived=['rejected','cancelled'].includes(pass.status);
+        if(passArchive!==archived)return false;
         const statusMatch=filter==='ALL'||(filter==='OVERDUE'?Boolean(pass.overdue):pass.status===filter);
         const yearMatch=year==='ALL'||passPeople(pass).some(person=>typeof yearMatches==='function'?yearMatches(person.registration_number,year):true);
         const text=`${peopleSearchText(pass)} ${pass.destination||''}`.toLowerCase();
@@ -443,6 +446,7 @@ window.AMFCC = (() => {
     $('passSearch').oninput=renderPassesV10;
     $('passFilter').onchange=renderPassesV10;
     $('passYearFilter').onchange=renderPassesV10;
+    $('passArchiveToggle').onclick=()=>{passArchive=!passArchive;$('passFilter').value='ALL';$('passFilter').hidden=passArchive;$('passArchiveToggle').textContent=passArchive?'Back to current passes':'View rejected and cancelled passes';renderPassesV10();};
     $('saveStudentEdit').onclick=saveStudentEditV10;
     $('editCampusStatus').onchange=toggleOutingFieldV10;
     if($('exportMovements'))$('exportMovements').onclick=exportMovementsV10;
@@ -460,6 +464,7 @@ window.AMFCC = (() => {
 
   function patchAdminMain(){
     injectV10Styles();
+    let passArchive=false;
 
     async function adminLoadV10(){
       if(!pin)return false;
@@ -493,6 +498,8 @@ window.AMFCC = (() => {
       const filter=$('passFilter')?.value||'ALL';
       const year=$('passYearFilter')?.value||'ALL';
       const rows=(dataCache?.gate_passes||[]).filter(pass=>{
+        const archived=['rejected','cancelled'].includes(pass.status);
+        if(passArchive!==archived)return false;
         const statusMatch=filter==='ALL'||(filter==='OVERDUE'?Boolean(pass.overdue):pass.status===filter);
         const yearMatch=year==='ALL'||passPeople(pass).some(person=>typeof yearMatches==='function'?yearMatches(person.registration_number,year):true);
         return statusMatch&&yearMatch&&`${peopleSearchText(pass)} ${pass.destination||''}`.toLowerCase().includes(query);
@@ -539,7 +546,6 @@ window.AMFCC = (() => {
       const expectedReturn=$('adminReviewReturnV10').value;
       const comments=$('decisionComments').value.trim();
       if(!departure||!expectedReturn)return toast('warn','Dates required','Enter both departure and expected return date and time.');
-      if(['rejected','cancelled'].includes(decision)&&!comments)return toast('warn','Add a reason','A rejection or cancellation reason is required.');
       document.querySelectorAll('#reviewModal button').forEach(button=>button.disabled=true);
       const {data,error}=await amfccDb.rpc('admin_review_gate_pass',{
         p_pin:pin,p_pass_id:reviewPassId,p_departure_at:new Date(departure).toISOString(),p_expected_return_at:new Date(expectedReturn).toISOString(),p_decision:decision,p_comments:comments||null
@@ -563,6 +569,7 @@ window.AMFCC = (() => {
     $('passSearch').oninput=renderAdminPassesV10;
     $('passFilter').onchange=renderAdminPassesV10;
     $('passYearFilter').onchange=renderAdminPassesV10;
+    $('passArchiveToggle').onclick=()=>{passArchive=!passArchive;$('passFilter').value='ALL';$('passFilter').hidden=passArchive;$('passArchiveToggle').textContent=passArchive?'Back to current passes':'View rejected and cancelled passes';renderAdminPassesV10();};
     document.querySelectorAll('[data-decision]').forEach(button=>button.onclick=()=>saveAdminReviewV10(button.dataset.decision));
 
     document.addEventListener('click',event=>{
@@ -578,6 +585,7 @@ window.AMFCC = (() => {
 
   function patchAdminGatePassPage(){
     injectV10Styles();
+    let passArchive=false;
 
     async function loadV10(){
       const {data,error}=await amfccDb.rpc('admin_services_dashboard_v2',{p_pin:pin,p_term_id:null});
@@ -592,7 +600,10 @@ window.AMFCC = (() => {
     function renderV10(){
       const query=($('passSearch')?.value||'').toLowerCase();
       const status=$('passFilter')?.value||'ALL';
-      const rows=(dataCache?.gate_passes||[]).filter(pass=>(status==='ALL'||pass.status===status)&&`${peopleSearchText(pass)} ${pass.destination||''}`.toLowerCase().includes(query));
+      const rows=(dataCache?.gate_passes||[]).filter(pass=>{
+        const archived=['rejected','cancelled'].includes(pass.status);
+        return passArchive===archived&&(status==='ALL'||pass.status===status)&&`${peopleSearchText(pass)} ${pass.destination||''}`.toLowerCase().includes(query);
+      });
       $('passRows').innerHTML=rows.map(pass=>`<tr><td>${peopleSummaryHtml(pass,false)}</td><td>${esc(pass.destination)}</td><td><span class="pill ${esc(pass.status)}">${esc(String(pass.status||'').toUpperCase())}</span>${pass.waiting_on?`<br><small>Waiting on ${esc(pass.waiting_on)}</small>`:''}</td><td>${esc(formatDateTime(pass.departure_at))}<br><small>Return ${esc(formatDateTime(pass.expected_return_at))}</small></td><td><button class="btn secondary compact-btn" data-review="${esc(pass.id)}">Open</button></td></tr>`).join('')||'<tr><td colspan="5" class="empty">No matching gate passes.</td></tr>';
     }
 
@@ -604,7 +615,7 @@ window.AMFCC = (() => {
     }
 
     window.load=loadV10;window.renderPasses=renderV10;window.login=loginV10;
-    $('loginBtn').onclick=loginV10;$('pin').onkeydown=event=>{if(event.key==='Enter')loginV10();};$('refresh').onclick=loadV10;$('passSearch').oninput=renderV10;$('passFilter').onchange=renderV10;
+    $('loginBtn').onclick=loginV10;$('pin').onkeydown=event=>{if(event.key==='Enter')loginV10();};$('refresh').onclick=loadV10;$('passSearch').oninput=renderV10;$('passFilter').onchange=renderV10;$('passArchiveToggle').onclick=()=>{passArchive=!passArchive;$('passFilter').value='ALL';$('passFilter').hidden=passArchive;$('passArchiveToggle').textContent=passArchive?'Back to current passes':'View rejected and cancelled passes';renderV10();};
     if(pin){$('pin').value=pin;loginV10();}
   }
 
@@ -615,4 +626,3 @@ window.AMFCC = (() => {
     else if(page==='admin_gate_passes.html')patchAdminGatePassPage();
   },0),{once:true});
 })();
-
