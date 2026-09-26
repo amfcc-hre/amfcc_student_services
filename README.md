@@ -72,7 +72,7 @@ Students can:
 - view their existing pass requests and approval status;
 - submit a personal gate-pass request;
 - provide destination, reason, contact details, departure time and expected return time;
-- provide an email address for submission and status notifications from `it@amfcc.ac.zw`;
+- provide an email address for submission confirmation and gate-pass decision notifications from `it@amfcc.ac.zw`;
 - add up to five additional students to the same pass; and
 - view current approved pass names and status.
 
@@ -93,12 +93,13 @@ The student notification address is saved privately against that pass. It is not
 
 When automatic mail is enabled by IT, notifications are deliberately targeted:
 
-- School Administration receives its own new-pass action email and one reminder if the pass is still pending with no decision 12 hours after the proposed departure time.
-- Management receives a separate actionable email and can record the senior approval as Principal, Dean or Director after entering the Management PIN.
-- Student Leadership receives an alert when an expected return is overdue and when a Tanaka or Amalinda Shops checkout has lasted more than 70 minutes without a later check-in.
-- The submitting student continues to receive their own pass submission and status confirmations.
+- School Administration and Management receive only action-required emails for submitted or pending passes.
+- Management can record the senior approval as Principal, Dean or Director after entering the Management PIN.
+- Student Leadership receives pass decision outcomes but does not receive routine submission, departure or return messages.
+- The submitting student receives a submission confirmation and pass decision outcomes.
+- Departure and return events do not send email to any recipient.
 
-School Administration and Student Leadership do not receive routine copies of every student status email. The database chooses the recipients and message contents. Browser code can only ask the protected mail worker to process messages already queued by the database.
+The database chooses recipients and message contents. Browser code can only ask the protected mail worker to process messages already queued by the database, and the worker suppresses any message that does not match these routing rules.
 
 ## What is not included
 
@@ -158,7 +159,7 @@ Existing gate-terminal files may remain in this repository because the campus ch
 | `admin_admin.js` | Compatibility dashboard data loading, actions and person filters |
 | `admin_mode_patch.js` | Keeps the compatibility page aligned with current operating modes |
 | `admin_gate_passes.js` | Compatibility pass decisions and queued email dispatch |
-| `gate_gate.js` | Campus gate kiosk and queued departure or return email dispatch |
+| `gate_gate.js` | Campus gate kiosk departure and return processing |
 
 ## Applying this update package
 
@@ -212,9 +213,9 @@ For a new installation, the complete Student Services repository is required, in
 12. Open Personal Gate Passes and search for a student.
 13. Confirm the page displays the correct School Term or Holiday pass rule.
 14. Confirm the pass form requires a valid email address.
-15. After IT enables mail, submit a controlled test pass and confirm the student and School Administration receive it. Confirm Student Leadership does not receive a routine submission copy.
-16. Verify the 12-hour unresolved-pending reminder goes only to School Administration.
-17. Verify overdue-return and Tanaka-over-70-minute alerts go only to Student Leadership.
+15. After IT enables mail, submit a controlled test pass and confirm the applicant receives a submission confirmation while School Administration and Management receive action-required messages.
+16. Approve the pass and confirm only the applicant and Student Leadership receive the approval outcome.
+17. Record a departure and return and confirm that neither action queues an email for any recipient.
 18. Open Student Library and search by title, author and ISBN.
 19. Untick the availability filter and confirm titles with no available copy can also be displayed.
 20. Open the compatibility School Administration page and test gender, class and campus-status filters on Campus, Accommodation, Gate passes, Fees, Gate duty and Recent movements.
