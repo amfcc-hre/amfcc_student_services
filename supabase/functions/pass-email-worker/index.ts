@@ -32,7 +32,7 @@ function escapeHtml(value: unknown) {
 }
 
 function cleanSubject(value: unknown) {
-  return String(value ?? "AMFCC Gate Pass Update").replace(/[\r\n]+/g, " ").slice(0, 200);
+  return String(value ?? "AMFCC Gate Pass Update").replace(/[\r\n]+/g, " " ).slice(0, 200);
 }
 
 function eventType(payload: Record<string, unknown>) {
@@ -42,6 +42,18 @@ function eventType(payload: Record<string, unknown>) {
 function requiresApproval(item: OutboxItem) {
   return ["administrator", "management"].includes(item.recipient_group)
     && ["submitted", "pending"].includes(eventType(item.payload || {}));
+}
+
+function shouldDeliver(item: OutboxItem) {
+  const event = eventType(item.payload || {});
+  if (["departed", "returned"].includes(event)) return false;
+  if (["administrator", "management"].includes(item.recipient_group)) {
+    return ["submitted", "pending"].includes(event);
+  }
+  if (item.recipient_group === "student_leadership") {
+    return ["approved", "rejected", "cancelled", "expired"].includes(event);
+  }
+  return ["submitted", "approved", "rejected", "cancelled", "expired"].includes(event);
 }
 
 function studentHeadline(payload: Record<string, unknown>) {
@@ -116,7 +128,7 @@ function plainText(item: OutboxItem) {
   const p = item.payload || {};
   const people = Array.isArray(p.people) ? p.people as Array<Record<string, unknown>> : [];
   const peopleText = people.length
-    ? people.map((person) => `${String(person.name || "")} (${String(person.registration_number || "")})`).join(", ")
+    ? people.map((person) => `${String(person.name || "")} (${String(person.registration_number || "")})`).join(", " )
     : `${String(p.student_name || "Student")} (${String(p.registration_number || "")})`;
   const intro = item.recipient_group === "student"
     ? `${studentHeadline(p)}.`
@@ -148,7 +160,7 @@ function buildEmail(item: OutboxItem) {
   const isStudent = item.recipient_group === "student";
   const people = Array.isArray(p.people) ? p.people as Array<Record<string, unknown>> : [];
   const peopleText = people.length
-    ? people.map((person) => `${escapeHtml(person.name)} (${escapeHtml(person.registration_number)})`).join(", ")
+    ? people.map((person) => `${escapeHtml(person.name)} (${escapeHtml(person.registration_number)})`).join(", " )
     : `${escapeHtml(p.student_name)} (${escapeHtml(p.registration_number)})`;
   const heading = isStudent
     ? escapeHtml(studentHeadline(p))
@@ -238,6 +250,10 @@ Deno.serve(async (request: Request) => {
     let failed = 0;
     for (const item of items) {
       try {
+        if (!shouldDeliver(item)) {
+          await rpc("pass_email_complete", { p_outbox_id:item.id,p_success:true,p_provider_message_id:"suppressed-by-routing",p_error:null });
+          continue;
+        }
         const response = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: { Authorization:`Bearer ${resendApiKey}`,"Content-Type":"application/json" },
