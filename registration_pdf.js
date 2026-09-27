@@ -38,9 +38,11 @@
     text('(as it appears on B/C, ID or PP)',38,157,6.8,regular,{color:grey});
     field('GENDER',value(data,'student_answers','gender'),174,{labelWidth:92,end:280});
     field('MARITAL STATUS',value(data,'student_answers','marital_status'),174,{x:300,labelWidth:108,end:545});
-    field('IF MARRIED, WHERE IS YOUR SPOUSE',value(data,'student_answers','spouse_location'),202,{labelWidth:226});
-    field('ID NO. / PASSPORT NO.',value(data,'student_answers','identity_number'),230,{labelWidth:150});
-    field('STUDENT REGISTRATION NUMBER',data.registration_number,258,{labelWidth:208});
+    field('IF MARRIED, WHERE IS YOUR SPOUSE',value(data,'student_answers','spouse_location'),198,{labelWidth:226});
+    field('ID NO. / PASSPORT NO.',value(data,'student_answers','identity_number'),222,{labelWidth:150});
+    field('EMAIL',value(data,'student_answers','student_email'),246,{labelWidth:48,end:350});
+    field('PHONE',value(data,'student_answers','student_phone'),246,{x:365,labelWidth:52,end:545});
+    field('STUDENT REGISTRATION NUMBER',data.registration_number,270,{labelWidth:208});
 
     section('B','SECTION B — SCHOOL FEES DETAILS',295);
     field('ARREARS FROM PREVIOUS TERM(S)',money(value(data,'fees_answers','arrears_previous_terms')),332,{labelWidth:215});

@@ -9,16 +9,17 @@
   function tokenKey(reg,term){return 'amfcc_enrolment_token_'+term+'_'+reg;}
   function answers(){return {
     gender:$('gender').value,marital_status:$('maritalStatus').value,spouse_location:$('spouseLocation').value.trim(),
-    identity_number:$('identityNumber').value.trim(),sponsor_name:$('sponsorName').value.trim(),sponsor_contact:$('sponsorContact').value.trim(),
+    identity_number:$('identityNumber').value.trim(),student_email:$('studentEmail').value.trim(),student_phone:$('studentPhone').value.trim(),
+    sponsor_name:$('sponsorName').value.trim(),sponsor_contact:$('sponsorContact').value.trim(),
     accommodation_type:$('accommodationType').value,accommodation_hostel:$('accommodationHostel').value.trim(),
     accommodation_room:$('accommodationRoom').value.trim(),shared_occupants:$('sharedOccupants').value?Number($('sharedOccupants').value):null
   };}
-  function applyAnswers(a){a=a||{};$('gender').value=a.gender||'';$('maritalStatus').value=a.marital_status||'';$('spouseLocation').value=a.spouse_location||'';$('identityNumber').value=a.identity_number||'';$('sponsorName').value=a.sponsor_name||'';$('sponsorContact').value=a.sponsor_contact||'';$('accommodationType').value=a.accommodation_type||'';$('accommodationHostel').value=a.accommodation_hostel||'';$('accommodationRoom').value=a.accommodation_room||'';$('sharedOccupants').value=a.shared_occupants||'';updateConditional();}
+  function applyAnswers(a){a=a||{};$('gender').value=a.gender||'';$('maritalStatus').value=a.marital_status||'';$('spouseLocation').value=a.spouse_location||'';$('identityNumber').value=a.identity_number||'';$('studentEmail').value=a.student_email||'';$('studentPhone').value=a.student_phone||'';$('sponsorName').value=a.sponsor_name||'';$('sponsorContact').value=a.sponsor_contact||'';$('accommodationType').value=a.accommodation_type||'';$('accommodationHostel').value=a.accommodation_hostel||'';$('accommodationRoom').value=a.accommodation_room||'';$('sharedOccupants').value=a.shared_occupants||'';updateConditional();}
   function updateConditional(){
     const married=$('maritalStatus').value==='Married',shared=$('accommodationType').value==='Shared';
     $('spouseField').hidden=!married;$('spouseLocation').required=married;
     $('sharedFields').hidden=!shared;$('marriedNote').hidden=$('accommodationType').value!=='Married';
-    ['accommodationHostel','accommodationRoom','sharedOccupants'].forEach(id=>$(id).required=shared);
+    ['accommodationHostel','accommodationRoom','sharedOccupants'].forEach(id=>$(id).required=false);
   }
   function queueSave(){if(!record||record.is_locked)return;setSaveState('Unsaved changes','saving');clearTimeout(saveTimer);saveTimer=setTimeout(saveDraft,650);}
   async function saveDraft(){
@@ -49,14 +50,14 @@
       record=data;localStorage.setItem(tokenKey(data.registration_number,data.term_id),data.resume_token);applyAnswers(data.student_answers);
       $('studentIdentity').innerHTML='<strong>'+escapeHtml(data.student_name)+'</strong><br>Registration '+escapeHtml(data.registration_number)+' · '+escapeHtml(data.term_name);
       $('termSummary').textContent=data.term_name+' · '+data.student_name;
-      if(data.is_locked){showSubmitted();}else{show('enrolmentForm');setSaveState(data.student_answers&&Object.keys(data.student_answers).length?'Draft restored':'Draft ready','saved');}
+      $('returnRequest').hidden=!data.return_reason;$('returnRequestText').textContent=data.return_reason||'';
+      if(data.is_locked){showSubmitted();}else{show('enrolmentForm');setSaveState(data.return_reason?'Information requested':data.student_answers&&Object.keys(data.student_answers).length?'Draft restored':'Draft ready',data.return_reason?'':'saved');}
     }catch(error){message(error.message||'The enrolment could not be opened.',true);}
     finally{button.disabled=false;button.textContent=lookup&&lookup.has_started?'Continue enrolment':'Start enrolment';}
   }
   function escapeHtml(value){return String(value==null?'':value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
   function validateConditional(){
     if($('maritalStatus').value==='Married'&&!$('spouseLocation').value.trim())return 'Enter where your spouse is.';
-    if($('accommodationType').value==='Shared'&&(!$('accommodationHostel').value.trim()||!$('accommodationRoom').value.trim()||Number($('sharedOccupants').value)<1))return 'Complete the hostel, room and occupant details for shared accommodation.';
     return '';
   }
   async function submit(event){

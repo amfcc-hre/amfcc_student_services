@@ -373,8 +373,8 @@ async function loadMode(){
 
   modeReady=true;
   applyConferenceState(
-    Boolean(data.conference_mode),
-    'Meal collection is unavailable while Conference Mode is on.'
+    !data.meal_collection_enabled,
+    data.conference_mode?'Meal collection is unavailable while Conference Mode is on.':'Meal collection is turned off. Kitchen will open it when collection is ready.'
   );
 }
 
@@ -384,8 +384,8 @@ async function collectMeal(event){
   if(conferenceMode){
     showFailure(
       'error',
-      'Conference Mode is on',
-      'Meal collection is unavailable until Conference Mode is turned off.'
+      'Meal collection is closed',
+      'Kitchen has not opened meal collection.'
     );
     return;
   }
@@ -439,10 +439,10 @@ async function collectMeal(event){
     return;
   }
 
-  if(data?.status==='conference_disabled'){
+  if(data?.status==='conference_disabled'||data?.status==='feature_disabled'){
     modeReady=true;
     applyConferenceState(true,data.message);
-    showFailure('error','Conference Mode is on',data.message);
+    showFailure('error','Meal collection is closed',data.message);
     return;
   }
 

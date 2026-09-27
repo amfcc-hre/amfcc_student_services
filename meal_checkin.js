@@ -190,7 +190,9 @@ async function loadStatus(){
   statusData=data;
   modeReady=true;
 
-  if(data.conference_mode){
+  if(!data.switch_enabled){
+    showModeBanner('','Meal check-in is turned off','Kitchen will open meal check-in when preparation counts are needed.');
+  }else if(data.conference_mode){
     showModeBanner(
       '',
       'Conference meals are automatic',
@@ -294,7 +296,7 @@ async function submitCheckin(event){
     showFailure('warning','Already checked in',data.message||'This meal check-in already exists.');
     return;
   }
-  if(data?.status==='holiday_disabled'||data?.status==='conference_disabled'){
+  if(data?.status==='holiday_disabled'||data?.status==='conference_disabled'||data?.status==='feature_disabled'){
     await loadStatus();
     showFailure('error','Check-in is unavailable',data.message||'The current school mode disables meal check-in.');
     return;
