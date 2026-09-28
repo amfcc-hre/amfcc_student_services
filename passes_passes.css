@@ -13,20 +13,6 @@
 .form-actions{display:flex;gap:9px;flex-wrap:wrap}
 .form-actions .btn{flex:1}
 
-.board-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-.board-heading h2{margin:0 0 4px}
-.btn.compact{padding:9px 12px}
-
-.approved-pass-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:14px;
-  padding:12px 0;
-  border-bottom:1px solid #e4e9ef
-}
-.approved-pass-row:last-child{border-bottom:0}
-
 .student-confirmation{margin:12px 0 0;font-weight:800}
 .student-confirmation.confirmed{
   padding:10px 12px;
@@ -142,9 +128,8 @@
 
 @media(max-width:600px){
   .approval-grid{grid-template-columns:1fr}
-  .pass-head,.board-heading,.people-heading{display:block}
+  .pass-head,.people-heading{display:block}
   .pass-head .pill{margin-top:8px}
-  .board-heading .btn{margin-top:10px;width:100%}
   .people-count{margin-top:8px}
   .registration-add-row{grid-template-columns:1fr}
   .registration-add-row .btn{width:100%}
@@ -183,4 +168,3 @@
 .student-search-option strong{color:#17202a}
 .student-search-option span{font-size:13px;color:#66727f}
 .student-search-status{padding:13px 14px;color:#66727f;font-weight:700}
-

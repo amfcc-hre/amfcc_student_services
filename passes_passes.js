@@ -325,40 +325,6 @@ async function findAndAddCompanion(){
   );
 }
 
-async function loadApprovedPasses(){
-  $('refreshApproved').disabled=true;
-
-  const {data,error}=await amfccDb.rpc('public_approved_gate_passes');
-
-  $('refreshApproved').disabled=false;
-
-  if(error||data?.status!=='success'){
-    $('approvedPasses').innerHTML=`
-      <div class="empty">Approved passes could not be loaded.</div>
-    `;
-    return;
-  }
-
-  const rows=data.passes||[];
-
-  $('approvedPasses').innerHTML=rows.length
-    ?rows.map(item=>{
-      const names=Array.isArray(item.names)
-        ?item.names.map(esc).join(', ')
-        :esc(item.student_name||'');
-
-      return `
-        <div class="approved-pass-row">
-          <strong>${names}</strong>
-          <span class="pill ${esc(item.status)}">
-            ${esc(String(item.status||'').toUpperCase())}
-          </span>
-        </div>
-      `;
-    }).join('')
-    :'<div class="empty">There are no active approved passes.</div>';
-}
-
 function renderPasses(data){
   selectApplicant({
     student_name:data.student_name,
@@ -397,7 +363,7 @@ function renderPasses(data){
         </article>
       `;
     }).join('')
-    :'<div class="empty">No gate pass requests found.</div>';
+    :'<div class="empty">No pending gate pass requests found.</div>';
 }
 
 async function loadPasses(){
@@ -408,7 +374,7 @@ async function loadPasses(){
 
   if(!selected){
     $('loadPasses').disabled=false;
-    $('loadPasses').textContent='View my pass status';
+    $('loadPasses').textContent='View pending pass status';
     return;
   }
 
@@ -419,7 +385,7 @@ async function loadPasses(){
   });
 
   $('loadPasses').disabled=false;
-  $('loadPasses').textContent='View my pass status';
+  $('loadPasses').textContent='View pending pass status';
 
   if(error||data?.status!=='success'){
     $('studentName').className='student-confirmation bad-text';
@@ -572,7 +538,6 @@ async function submitPass(){
   setLookupMessage('','');
 
   await loadPasses();
-  await loadApprovedPasses();
 }
 
 $('loadPasses').onclick=loadPasses;
@@ -584,8 +549,6 @@ $('showForm').onclick=()=>{
 
 $('submitPass').onclick=submitPass;
 $('addCompanion').onclick=findAndAddCompanion;
-$('refreshApproved').onclick=loadApprovedPasses;
-
 $('reg').addEventListener('input',()=>{
   selectedApplicant=null;
   currentReg='';
@@ -655,7 +618,6 @@ $('message').onclick=()=>$('message').classList.remove('open');
 
 window.addEventListener('online',()=>{
   setOnlineBadge('online');
-  loadApprovedPasses();
 });
 
 window.addEventListener(
@@ -665,8 +627,6 @@ window.addEventListener(
 
 setOnlineBadge('online');
 renderCompanions();
-loadApprovedPasses();
-setInterval(loadApprovedPasses,30000);
 registerSW();
 
 if(currentReg){
