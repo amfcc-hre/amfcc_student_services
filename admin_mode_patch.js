@@ -27,10 +27,10 @@
   async function getControlSession(pin) {
     pin=String(pin||"").trim(); if(!/^\d{4}$/.test(pin)) return;
     var result=await call("system_control_login",{p_role:"administrator",p_pin:pin});
-    if(result&&result.status==="success"){controlSession=result;sessionStorage.setItem("amfcc_admin_control_session",JSON.stringify(result));await refreshMode();}
+    if(result&&result.status==="success"){controlSession=result;sessionStorage.setItem("amfcc_admin_control_session",JSON.stringify(result));await refreshMode();window.dispatchEvent(new Event("amfcc-vehicle-session-changed"));}
   }
   function restoreControlSession(){try{var raw=sessionStorage.getItem("amfcc_admin_control_session");if(!raw)return false;controlSession=JSON.parse(raw);return !!controlSession.session_token}catch(e){return false}}
-  async function refreshMode(){if(!controlSession)return;var data=await call("system_control_bootstrap",{p_session_token:controlSession.session_token});if(!data||data.status!=="success"){controlSession=null;sessionStorage.removeItem("amfcc_admin_control_session");return}modeData=await call("system_mode_status",{});renderMode()}
+  async function refreshMode(){if(!controlSession)return;var data=await call("system_control_bootstrap",{p_session_token:controlSession.session_token});if(!data||data.status!=="success"){controlSession=null;sessionStorage.removeItem("amfcc_admin_control_session");return}modeData=await call("system_mode_status",{});renderMode();if(new URLSearchParams(location.search).get("returnTo")==="vehicles.html")location.replace("vehicles.html")}
   async function saveSettings(event) {
     event.preventDefault(); event.stopImmediatePropagation();
     var button=el("saveSettings"),old=button.textContent;button.disabled=true;button.textContent="Saving...";
@@ -51,9 +51,11 @@
   document.addEventListener("DOMContentLoaded",function(){
     el("adminSettingsActor").value=localStorage.getItem("amfcc_admin_settings_actor")||"";
     el("loginBtn").addEventListener("click",function(){var pin=el("pin").value;getControlSession(pin).catch(function(){})});
+    el("pin").addEventListener("keydown",function(event){if(event.key==="Enter")getControlSession(el("pin").value).catch(function(){})});
     el("operatingMode").addEventListener("change",function(){el("holidayMode").checked=this.value==="holiday";el("holidayRuleSummary").textContent=modeMessage(this.value,el("conferenceMode").checked)});
     el("conferenceMode").addEventListener("change",function(){el("holidayRuleSummary").textContent=modeMessage(el("operatingMode").value,this.checked)});
     el("saveSettings").addEventListener("click",saveSettings,true);
     if(restoreControlSession()) refreshMode().catch(function(){});
+    else if(/^[0-9]{4}$/.test(el("pin").value))getControlSession(el("pin").value).catch(function(){});
   });
 })();

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#123d2b">
+  <title>AMFCC Vehicle Checkout</title>
+  <link rel="icon" href="../assets_icon.png">
+  <link rel="stylesheet" href="../vehicle-checkout.css?v=1">
+</head>
+<body class="vehicle-page" data-vehicle-session="administration" data-vehicle-login="index.html?returnTo=vehicles.html" data-vehicle-back="index.html">
+  <main class="vehicle-shell">
+    <header class="vehicle-heading vehicle-top">
+      <div><p class="vehicle-eyebrow">AMFCC Harare · Transport</p><h1>Vehicle checkout</h1><p id="vehicle-workspace">Checking your access...</p></div>
+      <div class="vehicle-actions"><a id="vehicle-back" class="vehicle-button secondary" href="index.html">Return to workspace</a><button id="vehicle-refresh" class="vehicle-button secondary" type="button" hidden>Refresh</button></div>
+    </header>
+    <section id="vehicle-access" class="vehicle-dashboard" aria-live="polite"><h2>Checking your access</h2><p>Vehicle records are available to Transport, School Administration and the Administrators Office.</p></section>
+    <div id="vehicle-app" hidden>
+      <p class="vehicle-note">An administrator must confirm key handover before departure and receipt of the keys on return. One confirmation from School Administration or the Administrators Office is enough for each step. All dates and times use Harare time.</p>
+      <section class="vehicle-dashboard" aria-labelledby="vehicle-fleet-heading">
+        <div class="vehicle-heading"><div><h2 id="vehicle-fleet-heading">Vehicles now</h2><p>Availability and journeys waiting for key confirmation.</p></div><button id="vehicle-new" class="vehicle-button" type="button">New checkout</button></div>
+        <div id="vehicle-summary" class="vehicle-metrics"></div>
+        <p id="vehicle-page-error" class="vehicle-error" role="alert" hidden></p>
+        <div id="vehicle-cards" class="vehicle-grid"></div>
+        <p id="vehicle-updated" class="vehicle-updated" aria-live="polite"></p>
+      </section>
+      <section class="vehicle-history" aria-labelledby="vehicle-history-heading">
+        <div class="vehicle-heading"><div><h2 id="vehicle-history-heading">Journey history</h2><p>Checkout, return, mileage and signature records.</p></div></div>
+        <div class="vehicle-filter">
+          <label>Search journeys<input id="vehicle-history-search" type="search" maxlength="100" placeholder="Vehicle, person, number or journey"></label>
+          <label>Status<select id="vehicle-history-status"><option value="all">All journeys</option><option value="pending_checkout">Awaiting key handover</option><option value="checked_out">Checked out</option><option value="pending_return">Awaiting return confirmation</option><option value="returned">Returned</option><option value="cancelled">Cancelled</option></select></label>
+        </div>
+        <div class="vehicle-table-scroll"><table><thead><tr><th>Vehicle</th><th>Taken by</th><th>Checkout</th><th>Status</th><th>Mileage out</th><th>Mileage in</th><th>Distance</th><th>Record</th></tr></thead><tbody id="vehicle-history-rows"></tbody></table></div>
+        <div class="vehicle-pagination"><span id="vehicle-history-count"></span><div class="vehicle-actions"><button id="vehicle-prev" class="vehicle-button secondary" type="button">Previous</button><button id="vehicle-next" class="vehicle-button secondary" type="button">Next</button></div></div>
+      </section>
+    </div>
+  </main>
+
+  <dialog id="vehicle-checkout-dialog" aria-labelledby="vehicle-checkout-heading">
+    <div class="vehicle-heading"><h2 id="vehicle-checkout-heading">New vehicle checkout</h2><button class="vehicle-close" type="button" data-close-dialog aria-label="Close checkout">×</button></div>
+    <form id="vehicle-checkout-form" class="vehicle-form">
+      <label>Vehicle<select id="vehicle-select" required></select></label>
+      <div class="vehicle-form-grid"><label>Checkout date<input id="vehicle-out-date" type="date" required></label><label>Checkout time (Harare)<input id="vehicle-out-time" type="time" required></label></div>
+      <label>Search in<select id="vehicle-person-type"><option value="all">Students and staff</option><option value="student">Students</option><option value="staff">Staff members</option></select></label>
+      <div class="vehicle-picker"><label for="vehicle-person-search">Who is taking it out?</label><input id="vehicle-person-search" type="search" maxlength="100" placeholder="Search name or registration / staff number" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="vehicle-person-results" autocomplete="off" required><div id="vehicle-person-results" class="vehicle-results" role="listbox" aria-label="Student and staff search results" hidden></div></div>
+      <p id="vehicle-person-selected" class="vehicle-selected" hidden></p>
+      <label>Mileage going out (km)<input id="vehicle-mileage-out" type="number" min="0" max="10000000" step="0.1" inputmode="decimal" required></label>
+      <p id="vehicle-last-mileage" class="vehicle-muted"></p>
+      <label>Description of journey<textarea id="vehicle-journey" minlength="3" maxlength="3000" placeholder="Where are you going and what is the purpose of the journey?" required></textarea></label>
+      <label>Borrower signature<input id="vehicle-out-signature" type="text" maxlength="120" autocomplete="off" placeholder="Borrower types their full name from the lookup" required></label>
+      <label class="vehicle-check"><input id="vehicle-out-confirmation" type="checkbox" required><span>I am the person selected above. I confirm the journey details and outgoing mileage, and will return the vehicle and keys.</span></label>
+      <p id="vehicle-checkout-error" class="vehicle-error" role="alert" hidden></p>
+      <button class="vehicle-button" type="submit">Submit for key handover</button>
+    </form>
+  </dialog>
+
+  <dialog id="vehicle-return-dialog" aria-labelledby="vehicle-return-heading">
+    <div class="vehicle-heading"><h2 id="vehicle-return-heading">Record vehicle return</h2><button class="vehicle-close" type="button" data-close-dialog aria-label="Close return">×</button></div>
+    <p id="vehicle-return-summary"></p>
+    <form id="vehicle-return-form" class="vehicle-form">
+      <div class="vehicle-form-grid"><label>Return date<input id="vehicle-in-date" type="date" required></label><label>Return time (Harare)<input id="vehicle-in-time" type="time" required></label></div>
+      <label>Mileage coming back in (km)<input id="vehicle-mileage-in" type="number" min="0" max="10000000" step="0.1" inputmode="decimal" required></label>
+      <p id="vehicle-distance" class="vehicle-muted"></p>
+      <label>Borrower return signature<input id="vehicle-in-signature" type="text" maxlength="120" autocomplete="off" required></label>
+      <label class="vehicle-check"><input id="vehicle-in-confirmation" type="checkbox" required><span>I confirm the return date, time and mileage. The keys must be handed to School Administration or the Administrators Office.</span></label>
+      <p id="vehicle-return-error" class="vehicle-error" role="alert" hidden></p>
+      <button class="vehicle-button" type="submit">Submit return for key confirmation</button>
+    </form>
+  </dialog>
+
+  <dialog id="vehicle-confirm-dialog" aria-labelledby="vehicle-confirm-heading">
+    <div class="vehicle-heading"><h2 id="vehicle-confirm-heading">Confirm keys</h2><button class="vehicle-close" type="button" data-close-dialog aria-label="Close key confirmation">×</button></div>
+    <div id="vehicle-confirm-summary"></div>
+    <form id="vehicle-confirm-form" class="vehicle-form">
+      <label>Confirming administrator or office member<input id="vehicle-confirm-name" type="text" minlength="2" maxlength="120" autocomplete="name" required></label>
+      <label class="vehicle-check"><input id="vehicle-confirm-check" type="checkbox" required><span id="vehicle-confirm-text"></span></label>
+      <p id="vehicle-confirm-error" class="vehicle-error" role="alert" hidden></p>
+      <button id="vehicle-confirm-submit" class="vehicle-button" type="submit">Confirm keys</button>
+    </form>
+  </dialog>
+
+  <dialog id="vehicle-details-dialog" aria-labelledby="vehicle-details-heading">
+    <div class="vehicle-heading"><h2 id="vehicle-details-heading">Journey record</h2><button class="vehicle-close" type="button" data-close-dialog aria-label="Close journey record">×</button></div>
+    <div id="vehicle-details-content"></div><div id="vehicle-details-actions" class="vehicle-actions"></div>
+  </dialog>
+
+  <dialog id="vehicle-cancel-dialog" aria-labelledby="vehicle-cancel-heading">
+    <div class="vehicle-heading"><h2 id="vehicle-cancel-heading">Cancel pending checkout</h2><button class="vehicle-close" type="button" data-close-dialog aria-label="Close cancellation">×</button></div>
+    <p id="vehicle-cancel-summary"></p>
+    <form id="vehicle-cancel-form" class="vehicle-form"><label>Your name<input id="vehicle-cancel-name" type="text" minlength="2" maxlength="120" required></label><label>Reason<textarea id="vehicle-cancel-reason" minlength="3" maxlength="1000" required></textarea></label><p id="vehicle-cancel-error" class="vehicle-error" role="alert" hidden></p><button class="vehicle-button danger" type="submit">Cancel this checkout</button></form>
+  </dialog>
+  <div id="vehicle-toast" class="vehicle-toast" role="status" hidden></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../shared_config.js?v=5"></script>
+  <script src="../vehicle-dashboard.js?v=1"></script>
+  <script src="../vehicle-checkout.js?v=1"></script>
+</body>
+</html>

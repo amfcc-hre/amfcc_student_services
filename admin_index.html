@@ -9,8 +9,9 @@
   <link rel="stylesheet" href="shared_ui.css?v=8.3">
   <link rel="stylesheet" href="dashboard_dashboard.css">
   <link rel="stylesheet" href="admin_admin.css?v=8.2">
+  <link rel="stylesheet" href="vehicle-checkout.css?v=1">
 </head>
-<body>
+<body data-vehicle-session="school">
 <main class="container">
   <div class="topbar admin-topbar">
     <div>
@@ -21,11 +22,13 @@
     <div class="term-context">
       <a class="dashboard-link" href="administration/">Administration Staff</a>
       <a class="dashboard-link" href="https://amfcc-hre.github.io/department-operations/" target="_blank" rel="noopener">Department Operations</a>
+      <a class="dashboard-link" href="vehicles.html" data-vehicle-link hidden>Vehicle checkout</a>
       <label for="termSelect">Fee term</label>
       <select id="termSelect"></select>
     </div>
   </div>
 
+  <section class="vehicle-dashboard" data-vehicle-dashboard aria-label="Vehicle checkout dashboard" hidden></section>
   <div class="grid six metrics-grid">
     <button type="button" class="card metric metric-filter" data-filter-tab="campus" data-filter-value="IN"><b id="onCount">0</b><span>On campus</span></button>
     <button type="button" class="card metric metric-filter" data-filter-tab="campus" data-filter-value="OUT"><b id="offCount">0</b><span>Off campus</span></button>
@@ -125,6 +128,7 @@
 <div id="toast" class="modal"><div class="modalbox"><div id="toastBox" class="result-box"></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="shared_config.js"></script><script src="shared_supabase.js"></script><script src="shared_utils.js?v=10.1"></script><script src="admin_admin.js?v=10.1"></script><script src="admin_mode_patch.js?v=1.1"></script>
+<script src="shared_config.js"></script><script src="shared_supabase.js"></script><script src="shared_utils.js?v=10.1"></script><script src="admin_admin.js?v=10.1"></script><script src="admin_mode_patch.js?v=1.2"></script>
+<script src="vehicle-dashboard.js?v=1"></script>
 </body>
 </html>

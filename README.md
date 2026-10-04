@@ -248,3 +248,12 @@ Confirm that the card belongs to an active student in the shared student databas
 - [AMFCC Department Operations](https://github.com/amfcc-hre/department-operations): Kitchen, Clinic, department, Student Leadership, Management and School Administration workspaces.
 - [AMFCC IT Administration](https://github.com/amfcc-hre/it-admin-site): system settings and PIN management.
 - [AMFCC Library](https://github.com/amfcc-hre/library-site): ISBN lookup, catalogue and circulation.
+
+
+## Shared vehicle checkout
+
+School Administration can open Vehicle checkout from `admin_index.html` or from the School Administration login in `administration/`. The standalone pages are `vehicles.html` and `administration/vehicles.html`. Shared scripts and styling are `vehicle-dashboard.js`, `vehicle-checkout.js` and `vehicle-checkout.css`. Both entry points use the same `ops_vehicle_*` APIs as Transport and the Administrator's Office in Department Operations.
+
+The borrower must be selected from the active student/staff lookup, enter outgoing mileage and journey details, type their name and confirm the checkout. One confirmation from School Administration OR the Administrator's Office is required to hand over keys. Returning the vehicle requires incoming mileage and borrower confirmation, followed by one named confirmation of receipt of keys. The vehicle stays unavailable until this final confirmation. Journey history preserves both signatures and both key confirmations. All times use Harare time.
+
+The existing School Administration system session is verified by the server. Other Administration roles do not gain confirmation rights. `admin_mode_patch.js` obtains the existing system session on normal School Administration login and returns to the vehicle page after a direct visit. No new PIN, credential or service-role key is introduced. See Department Operations `README.md` for the full workflow, troubleshooting and database migration.
