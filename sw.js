@@ -1,4 +1,4 @@
-const CACHE='amfcc-student-services-v25-home-restored';
+const CACHE='amfcc-student-services-v26-registration-takeover';
 const CORE=[
   './','./index.html','./manifest.webmanifest','./assets_icon.png',
   './shared_ui.css','./shared_config.js','./shared_supabase.js','./shared_utils.js',
@@ -25,3 +25,4 @@ self.addEventListener('fetch',event=>{
     return response;
   }).catch(()=>caches.match(event.request)));
 });
+

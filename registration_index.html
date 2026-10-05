@@ -40,7 +40,8 @@
     <section id="confirmPanel" class="card state-panel" hidden>
       <div class="state-icon">✓</div><p class="eyebrow">Confirm your record</p>
       <h2 id="confirmName"></h2><p id="confirmDetails" class="muted"></p>
-      <div class="button-row"><button id="startButton" class="btn primary" type="button">Start enrolment</button><button id="notMeButton" class="btn secondary" type="button">Not me</button></div>
+      <div id="sessionConflict" class="notice warning" role="status" hidden><strong>Continue in this browser</strong><p id="sessionConflictText"></p></div>
+      <div class="button-row"><button id="takeoverButton" class="btn secondary" type="button" hidden>End other sessions and continue here</button><button id="startButton" class="btn primary" type="button">Start enrolment</button><button id="notMeButton" class="btn secondary" type="button">Not me</button></div>
     </section>
 
     <form id="enrolmentForm" hidden>
@@ -48,6 +49,8 @@
         <div class="step-label">Step 2 of 2</div><h2>Student sections</h2>
         <p>Complete your student information in Section A. You may also provide sponsor and accommodation details for Administration.</p>
         <div id="studentIdentity" class="identity-card"></div>
+        <button id="endOtherSessionsButton" class="btn secondary" type="button">End other sessions and continue here</button>
+        <p class="muted small">Use this if your form is also open on another page or browser. Saved answers will be kept. Unsaved changes in other sessions will be lost.</p>
       </section>
 
       <section class="card official-section">
@@ -102,6 +105,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script src="shared_config.js"></script><script src="shared_supabase.js"></script>
-  <script src="registration_pdf.js?v=2"></script><script src="registration.js?v=2"></script>
+  <script src="registration_pdf.js?v=2"></script><script src="registration.js?v=3-session-takeover"></script>
 </body>
 </html>
+
