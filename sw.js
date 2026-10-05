@@ -1,4 +1,4 @@
-const CACHE='amfcc-student-services-v24-vehicle-checkout';
+const CACHE='amfcc-student-services-v25-home-restored';
 const CORE=[
   './','./index.html','./manifest.webmanifest','./assets_icon.png',
   './shared_ui.css','./shared_config.js','./shared_supabase.js','./shared_utils.js',
