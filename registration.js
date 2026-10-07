@@ -10,12 +10,16 @@
   function answers(){return {
     gender:$('gender').value,marital_status:$('maritalStatus').value,spouse_location:$('spouseLocation').value.trim(),
     identity_number:$('identityNumber').value.trim(),student_email:$('studentEmail').value.trim(),student_phone:$('studentPhone').value.trim(),
-    sponsor_name:$('sponsorName').value.trim(),sponsor_contact:$('sponsorContact').value.trim(),
+    ...(record&&record.sponsor_required===false?{}:{sponsor_name:$('sponsorName').value.trim(),sponsor_contact:$('sponsorContact').value.trim()}),
     accommodation_type:$('accommodationType').value,accommodation_hostel:$('accommodationHostel').value.trim(),
     accommodation_room:$('accommodationRoom').value.trim(),shared_occupants:$('sharedOccupants').value?Number($('sharedOccupants').value):null
   };}
   function applyAnswers(a){a=a||{};$('gender').value=a.gender||'';$('maritalStatus').value=a.marital_status||'';$('spouseLocation').value=a.spouse_location||'';$('identityNumber').value=a.identity_number||'';$('studentEmail').value=a.student_email||'';$('studentPhone').value=a.student_phone||'';$('sponsorName').value=a.sponsor_name||'';$('sponsorContact').value=a.sponsor_contact||'';$('accommodationType').value=a.accommodation_type||'';$('accommodationHostel').value=a.accommodation_hostel||'';$('accommodationRoom').value=a.accommodation_room||'';$('sharedOccupants').value=a.shared_occupants||'';updateConditional();}
   function updateConditional(){
+    const exempt=record&&record.sponsor_required===false;
+    $('sponsorSection').hidden=!!exempt;$('registrationExemption').hidden=!exempt;
+    ['sponsorName','sponsorContact'].forEach(id=>{$(id).disabled=!!exempt;$(id).required=false;});
+    $('formInstructions').textContent=exempt?'Complete your personal and accommodation details. Sponsor details and the Administrator’s Office check are not required for executive or missions students.':'Complete your student information in Section A. You may also provide sponsor and accommodation details for Administration.';
     const married=$('maritalStatus').value==='Married',shared=$('accommodationType').value==='Shared';
     $('spouseField').hidden=!married;$('spouseLocation').required=married;
     $('sharedFields').hidden=!shared;$('marriedNote').hidden=$('accommodationType').value!=='Married';
@@ -109,7 +113,7 @@
   function showSubmitted(){show('submittedPanel');setSaveState('Submitted','saved');$('submittedMessage').textContent=(record.term_name||'Your term')+' form has been received. You can download the printable student-submitted version below.';}
   async function downloadPdf(){
     const button=$('downloadStudentPdf');button.disabled=true;button.textContent='Preparing PDF…';
-    try{const result=await AMFCCRegistrationPDF.build({student_name:record.student_name,registration_number:record.registration_number,term_name:record.term_name,student_answers:record.student_answers||answers(),admin_answers:{},fees_answers:{},accommodation_answers:{},final_answers:{}});AMFCCRegistrationPDF.download(result);}
+    try{const result=await AMFCCRegistrationPDF.build({student_name:record.student_name,registration_number:record.registration_number,term_name:record.term_name,sponsor_required:record.sponsor_required,admin_office_required:record.admin_office_required,student_answers:record.student_answers||answers(),admin_answers:{},fees_answers:{},accommodation_answers:{},final_answers:{}});AMFCCRegistrationPDF.download(result);}
     catch(error){message(error.message||'The PDF could not be created.',true);}finally{button.disabled=false;button.textContent='Download printable form';}
   }
   document.addEventListener('DOMContentLoaded',()=>{
@@ -121,3 +125,4 @@
     checkStatus();if('serviceWorker'in navigator)navigator.serviceWorker.register('./sw.js',{scope:'./',updateViaCache:'none'});
   });
 })();
+

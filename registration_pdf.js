@@ -49,8 +49,8 @@
     field('AMOUNT PAID FOR THE CURRENT TERM',money(value(data,'fees_answers','amount_paid_current_term')),360,{labelWidth:238});
     field('OUTSTANDING BALANCE',money(value(data,'fees_answers','outstanding_balance')),388,{labelWidth:160});
     field('PAYMENT PLAN',value(data,'fees_answers','payment_plan'),416,{labelWidth:110});
-    field('SPONSOR NAME',value(data,'student_answers','sponsor_name'),444,{labelWidth:118});
-    field('SPONSOR CONTACT',value(data,'student_answers','sponsor_contact'),472,{labelWidth:128});
+    field('SPONSOR NAME',data.sponsor_required===false?'Not required (Executive / missions)':value(data,'student_answers','sponsor_name'),444,{labelWidth:118});
+    field('SPONSOR CONTACT',data.sponsor_required===false?'Not required':value(data,'student_answers','sponsor_contact'),472,{labelWidth:128});
     field('CERTIFIED BY',value(data,'fees_answers','fees_certified_by'),500,{labelWidth:105});
 
     section('C','SECTION C — ACCOMMODATION',537);
@@ -62,7 +62,7 @@
     field('CERTIFIED BY',value(data,'accommodation_answers','accommodation_certified_by'),693,{labelWidth:105});
 
     line(31,732,552,732,1);
-    field('OFFICIAL DATE OF ARRIVAL',value(data,'admin_answers','official_date_of_arrival'),745,{labelWidth:177,end:345});
+    field('OFFICIAL DATE OF ARRIVAL',data.admin_office_required===false?'Not required':value(data,'admin_answers','official_date_of_arrival'),745,{labelWidth:177,end:345});
     field('TERM',data.term_name,745,{x:365,labelWidth:43,end:545});
     field("PRINCIPAL'S SIGNATURE",value(data,'final_answers','principal_signature'),779,{labelWidth:165});
     text('Generated from the AMFCC term enrolment record',31,817,6.5,regular,{color:grey});
@@ -73,3 +73,4 @@
   function download(result){const blob=new Blob([result.bytes],{type:'application/pdf'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=result.filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
   window.AMFCCRegistrationPDF={build,download};
 })();
+

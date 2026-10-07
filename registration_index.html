@@ -47,7 +47,7 @@
     <form id="enrolmentForm" hidden>
       <section class="card form-intro">
         <div class="step-label">Step 2 of 2</div><h2>Student sections</h2>
-        <p>Complete your student information in Section A. You may also provide sponsor and accommodation details for Administration.</p>
+        <p id="formInstructions">Complete your student information in Section A. You may also provide sponsor and accommodation details for Administration.</p>
         <div id="studentIdentity" class="identity-card"></div>
         <button id="endOtherSessionsButton" class="btn secondary" type="button">End other sessions and continue here</button>
         <p class="muted small">Use this if your form is also open on another page or browser. Saved answers will be kept. Unsaved changes in other sessions will be lost.</p>
@@ -65,7 +65,8 @@
         </div>
       </section>
 
-      <section class="card official-section">
+      <div id="registrationExemption" class="notice info" hidden>Executive / missions student: Sponsor details and the Administrator’s Office check are not required.</div>
+      <section id="sponsorSection" class="card official-section">
         <div class="section-heading"><span>B</span><div><p class="eyebrow">Section B</p><h2>Sponsor details</h2></div></div>
         <div class="grid two">
           <div class="field"><label for="sponsorName">Sponsor name</label><input id="sponsorName"></div>
@@ -105,7 +106,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script src="shared_config.js"></script><script src="shared_supabase.js"></script>
-  <script src="registration_pdf.js?v=2"></script><script src="registration.js?v=3-session-takeover"></script>
+  <script src="registration_pdf.js?v=3-exemptions"></script><script src="registration.js?v=4-executive-missions"></script>
 </body>
 </html>
+
 
